@@ -1,4 +1,5 @@
-import EventEmitter from 'EventEmitter'
+import 'babel-polyfill'
+import EventEmitter from 'events'
 import merge from 'deepmerge'
 const eventEmitter = new EventEmitter()
 
@@ -18,6 +19,10 @@ export default class Model {
 
   _importStorage () {
     this.storage = require(`stagync-storage-${this.type}`)
+
+    if (this.storage.default) {
+      this.storage = this.storage.default
+    }
   }
 
   _prepareVars (config) {
@@ -79,10 +84,6 @@ export default class Model {
         }
       }
     }
-  }
-
-  getStorage () {
-    return this.storage
   }
 
   addEventName (name) {
@@ -173,8 +174,8 @@ export default class Model {
 
   setItemOrMergeItem (result) {
     return result
-      ? this.getStorage().mergeItem
-      : this.getStorage().setItem
+      ? this.storage.mergeItem
+      : this.storage.setItem
   }
 
   async format (props) {
@@ -238,14 +239,16 @@ export default class Model {
         }
       }
     }
+
     // Força a execução sem a validação
     if (!force) {
       props = await this.validation(props)
     }
 
     if (!props) {
-      return Promise.resolve(true)
+      return true
     }
+
     // Formata os valores caso a formação esteja configura no schema
     props = await this.format(props)
 
@@ -253,12 +256,7 @@ export default class Model {
 
     try {
       return await new Promise((resolve, reject) => {
-        that.getStorage().getItem(that.key, (err, result) => {
-          if (err) {
-            that.emit(props, err)
-            return reject(err)
-          }
-
+        that.get().then((result) => {
           that.setItemOrMergeItem(result)(that.key, JSON.stringify(props), (err) => {
             if (err) {
               that.emit(props, err)
@@ -268,11 +266,13 @@ export default class Model {
             that.emit(props)
             resolve(true)
           })
+        }, (err) => {
+          that.emit(props, err)
+          reject(err)
         })
       })
     } catch (err) {
-      console.warn('Stagync', err)
-      return null
+      throw err.message
     }
   }
 
@@ -289,7 +289,7 @@ export default class Model {
    * Limpa toda tabela
    */
   async clear (emitter) {
-    const exec = await this.getStorage().removeItem(this.key)
+    const exec = await this.storage.removeItem(this.key)
     this._prepareDefaultValues(emitter)
     return exec
   }
@@ -308,14 +308,14 @@ export default class Model {
   /**
    * Pega as propriedadades
    */
-  async get (item, virtualProps = true) {
-    const that = this
-
+  get (item, virtualProps) {
     try {
-      return await new Promise((resolve, reject) => {
-        that.getStorage().getItem(that.key, (err, value) => {
+      const that = this
+
+      return new Promise((resolve, reject) => {
+        that.storage.getItem(that.key, async (err, value) => {
           if (err) {
-            return reject(err)
+            throw err.message
           }
 
           if (typeof value === 'string') {
@@ -325,20 +325,29 @@ export default class Model {
           }
 
           if (item) {
-            return resolve(that.virtualProps[item] || value[item] || null)
-          }
+            resolve(await that.virtualProps[item] || value[item] || null)
+          } else {
+            // const vProps = await this.getVirtualProps()
+            // value = merge(value, vProps)
 
-          if (virtualProps) {
-            value = merge(value, that.virtualProps)
+            resolve(value)
           }
-
-          resolve(value)
         })
       })
     } catch (err) {
-      console.log('ERROR', err)
-      return null
+      throw err.message
     }
+  }
+
+  async getVirtualProps () {
+    var result = {}
+
+    for (let key in this.virtualProps) {
+      let prop = await this.virtualProps[key]
+      result[key] = prop
+    }
+
+    return result
   }
 
   /**

@@ -20,5 +20,16 @@
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sophiware/stagync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sophiware/stagync/issues"
+  },
+  "homepage": "https://github.com/sophiware/stagync#readme"
 }

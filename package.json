@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "clone": "^2.1.1",
     "deepmerge": "^2.0.0",
     "stagync-storage-memory": "0.0.1"
   },

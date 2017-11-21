@@ -23,19 +23,17 @@ module.exports = new Model({
     fullName: {
       async get () {
         const {firstName, lastName} = await this.get()
-
-        return firstName + ' ' + lastName
+        const data = await this.get()
+        console.log('data', data)
+        return firstName + '' + lastName
       }
     },
     age: {
-      get () {
+      async get () {
+        const data = await this.get()
+        console.log('data', data)
         return 28
       }
-    }
-  },
-  methods: {
-    getALl () {
-      return null
     }
   }
 })

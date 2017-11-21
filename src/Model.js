@@ -1,6 +1,7 @@
 import 'babel-polyfill'
 import EventEmitter from 'events'
 import merge from 'deepmerge'
+import clone from 'clone'
 const eventEmitter = new EventEmitter()
 
 export default class Model {
@@ -38,6 +39,7 @@ export default class Model {
     this.eventsNames = []
     this.virtualProps = {}
     this.stillEmitter = config.still || false
+    this.currentVirtualProp = null
   }
 
   _prepareDefaultValues (emitter = true) {
@@ -68,12 +70,30 @@ export default class Model {
       let prop = this.schema[key]
 
       if (typeof prop.get === 'function') {
+        const instance = clone(this)
+
+        // Substitui o this.get para evitar loop infinito
+        instance.get = instance._virtualPropGet
+        instance.getVirtualProps = instance._virtualPropGetError
+
         Object.defineProperty(this.virtualProps, key, {
           enumerable: true,
-          get: prop.get.bind(this)
+          get: prop.get.bind(instance)
         })
       }
     }
+  }
+
+  _virtualPropGetError (item) {
+    throw new Error('Unable to get virtual properties from a virtual property')
+  }
+
+  _virtualPropGet (item) {
+    if (this.schema[item] && this.schema[item].get) {
+      return this._virtualPropGetError()
+    }
+
+    return this.getStorageProps(item)
   }
 
   _prepareMethods () {
@@ -84,6 +104,10 @@ export default class Model {
         }
       }
     }
+  }
+
+  _setCurrentVirtualProp (prop) {
+    this.currentVirtualProp = prop
   }
 
   addEventName (name) {
@@ -109,7 +133,7 @@ export default class Model {
     }
 
     if (getStart) {
-      this.get().then(data => {
+      this.getStorageProps().then(data => {
         for (let key in data) {
           if (key in props) {
             props[key](null, data[key])
@@ -223,7 +247,7 @@ export default class Model {
    * Mescla novos dados com os dados já salvos
    */
   async merge (props, force = false) {
-    const current = await this.get()
+    const current = await this.getStorageProps()
     const data = merge(current || {}, props)
     return this.set(data, force)
   }
@@ -235,7 +259,7 @@ export default class Model {
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
-          return Promise.reject(new Error(`You can not modify a virtual property: ${key}`))
+          throw new Error(`You can not modify a virtual property: ${key}`)
         }
       }
     }
@@ -256,7 +280,7 @@ export default class Model {
 
     try {
       return await new Promise((resolve, reject) => {
-        that.get().then((result) => {
+        that.getStorageProps().then((result) => {
           that.setItemOrMergeItem(result)(that.key, JSON.stringify(props), (err) => {
             if (err) {
               that.emit(props, err)
@@ -305,41 +329,32 @@ export default class Model {
     return exec
   }
 
-  /**
-   * Pega as propriedadades
-   */
-  get (item, virtualProps) {
-    try {
-      const that = this
+  getStorageProps () {
+    const that = this
 
-      return new Promise((resolve, reject) => {
-        that.storage.getItem(that.key, async (err, value) => {
-          if (err) {
-            throw err.message
-          }
+    return new Promise((resolve, reject) => {
+      that.storage.getItem(that.key, async (err, value) => {
+        if (err) {
+          return reject(err)
+        }
 
-          if (typeof value === 'string') {
-            value = JSON.parse(value)
-          } else if (!value) {
-            value = {}
-          }
+        if (typeof value === 'string') {
+          value = JSON.parse(value)
+        } else if (!value) {
+          value = {}
+        }
 
-          if (item) {
-            resolve(await that.virtualProps[item] || value[item] || null)
-          } else {
-            // const vProps = await this.getVirtualProps()
-            // value = merge(value, vProps)
-
-            resolve(value)
-          }
-        })
+        resolve(value)
       })
-    } catch (err) {
-      throw err.message
-    }
+    })
   }
 
-  async getVirtualProps () {
+  async getVirtualProps (item) {
+    if (item) {
+      const data = await this.virtualProps[item]
+      return data
+    }
+
     var result = {}
 
     for (let key in this.virtualProps) {
@@ -348,6 +363,29 @@ export default class Model {
     }
 
     return result
+  }
+  /**
+   * Pega as propriedadades
+   */
+
+  async get (item) {
+    try {
+      if (item) {
+        if (item in this.virtualProps) {
+          const data = await this.getVirtualProps(item)
+          return data
+        }
+
+        const dataStorage = await this.getStorageProps()
+        return dataStorage[item] || null
+      }
+
+      var data = await this.getStorageProps()
+      var vProps = await this.getVirtualProps()
+      return merge(data, vProps)
+    } catch (err) {
+      throw err.message
+    }
   }
 
   /**

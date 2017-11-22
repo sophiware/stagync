@@ -1,6 +1,11 @@
 # stagync
 Persiste dados modelados e sincroniza, com o foco principal em frontend, web e apps baseados em javascript
 
+# Razão
+O Stagync foi criado para suprir a necessidade de controle de dados no cliente. Seu proposito é salvar e recuperar dados em SPA (single page application) e react-native, de forma global e automatica. Sendo assim, é possivél sincronizar dados em toda a aplicação baseado em uma ou diversas origem.
+### Curiosidade
+O nome *Stagync* vem na junção das palavras *Storage* e *Sync*
+
 # Schema
 Exemplo de um Model
 ```javascript
@@ -78,8 +83,33 @@ const handler = async () => {
 handler()
 ```
 
+
+# stagync-storage
+O Stagync não funciona sozinho. Para ultilizalo você precisa de um *stagync-storage*. Os stagync-storage são plugins que conectão o seu modelo de dados a um local de armazenamento.
+
+## Exemplo
+### [stagync-storage-memory](https://github.com/sophiware/stagync-storage-memory)
+Persistes os dados em memoria. Ou seja, uma variavel global é criada persistindo nela os dados salvos.
+
+### [stagync-storage-native-async-storage](https://github.com/sophiware/stagync-storage-memory) (A fazer)
+Persistes dados ultilizando [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html)
+
+### [stagync-storage-localstorage](https://github.com/sophiware/stagync-storage-localstorage) (A fazer)
+Persistes os dados no local storage do navegador.
+
+### [stagync-storage-cookie](https://github.com/sophiware/stagync-storage-cookie) (A fazer)
+Persistes os dados em cookies para navegadores
+
+### [stagync-storage-session](https://github.com/sophiware/stagync-storage-session) (A fazer)
+Persistes os dados em sessão para navegadores
+
+# Instalação
+```bash
+  npm install --save stagync stagync-storage-memory
+```
+
 ## Virtual props
-Defini propriedades que executam uma função retornando um valor combinado ou outro.
+Defini propriedades que executam uma função. Essa função pode retornar propriedaes tratadas ou qualquer outro valor, podendo ser assíncrona ou sincrona.
 ```javascript
 //... models/user.js
 fullName: { // Virtual prop
@@ -95,7 +125,7 @@ const fullName = User.get('fullName')
 console.log(fullName) // Philippe Assis
 ```
 #### listener
-Array com o o nome das propriedade dependente. Quano listener é definido em uma propriedade virtual essa propriedade emit um evento para sincronização quando as propriedades definidas em listener são atualizadas
+Array com o o nome das propriedade dependente. Quando listener é definido em uma propriedade virtual essa propriedade emit um evento para sincronização quando as propriedades definidas em listener são atualizadas
 ```javascript
 //...
 User.sync({
@@ -127,6 +157,23 @@ Você pode especificar a propriedade a ser recuperada
 const data = await User.get('nickname')
 ```
 
+### merge
+Mescla novos dados com dados já salvos
+```javascript
+User.merge({
+  active: false
+})
+
+/*
+Result:
+{
+  "nickiname": "Assis",
+  "tags": ['Brazil', 'Dev'],
+  "active": false
+}
+*/
+```
+
 ## Sincronizadores
 ### sync(props)
 Sincroniza propriedades definidas em um objecto executando um callback toda vez em que a propriedade for atualizada
@@ -155,7 +202,7 @@ User.syncMany(['nickname', 'tags'], (err, data) {
 })
 ```
 
-### clear()
+## clear()
 Limpa toda a tabela
 ```javascript
 User.clear()

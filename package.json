@@ -1,6 +1,6 @@
 {
   "name": "stagync",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Persistes modeled data and synchronizes",
   "main": "lib/index.js",
   "scripts": {
@@ -34,7 +34,8 @@
     "mocha": "^4.0.1"
   },
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "test": "test"
   },
   "repository": {
     "type": "git",
@@ -43,5 +44,19 @@
   "bugs": {
     "url": "https://github.com/sophiware/stagync/issues"
   },
-  "homepage": "https://github.com/sophiware/stagync#readme"
+  "homepage": "https://github.com/sophiware/stagync#readme",
+  "keywords": [
+    "sync",
+    "storage",
+    "localstorage",
+    "asyncstorage",
+    "session",
+    "cookie",
+    "model",
+    "orm",
+    "spa",
+    "react-native",
+    "react",
+    "vuejs"
+  ]
 }

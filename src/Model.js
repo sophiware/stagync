@@ -20,13 +20,18 @@ export default class Model {
 
   _importStorage () {
     try {
-      var Storage = require(`stagync-storage-${this.type}`)
+      if (!this.type && this.config.storage) {
+        console.log('Include storage')
+        this.storage = new this.config.storage(this)
+      } else {
+        var Storage = require(`stagync-storage-${this.type}`)
 
-      if (Storage.default) {
-        Storage = Storage.default
+        if (Storage.default) {
+          Storage = Storage.default
+        }
+
+        this.storage = new Storage(this)
       }
-
-      this.storage = new Storage(this)
     } catch (err) {
       console.info(`'Type '${this.type}' not found, try running 'npm i --save stagync-storage-${this.type}'`)
       throw new Error(err.message)
@@ -42,7 +47,7 @@ export default class Model {
     this.key = `@${this.database}:${this.table}`
     this.prefixNameEvent = `${this.key}:`
     this.schema = config.schema || null
-    this.type = config.type || 'memory'
+    this.type = config.type || null
     this.eventsNames = []
     this.virtualProps = {}
     this.stillEmitter = config.still || false
@@ -316,7 +321,8 @@ export default class Model {
   async set (props, force = false) {
     if (this.virtualProps) {
       for (let key in props) {
-        if (this.virtualProps[key]) {result
+        if (this.virtualProps[key]) {
+          result
           throw new Error(`You can not modify a virtual property: ${key}`)
         }
       }

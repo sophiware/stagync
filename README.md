@@ -285,3 +285,16 @@ Limpa toda a tabela
 ```javascript
 User.clear()
 ```
+# Stagync com Webpack
+Ao ultilizar Stagync com Webpack, você não deve definir o tipo de armazenamento com *type*. Ao invés disso, você deve importar diretamente a biblioteca do storage e definir em na propriedade **storage**.
+Caso contrário o webpack não conseguirá realizar o *require* no plugin. Tornando-se comum a exibição do erro: `Cannot find module "."`
+
+```javascript
+import { Model } from 'stagync'
+import Memory from 'stagync-storage-memory' // Import lib
+
+export default new Model({
+  database: 'myDataBase',
+  table: 'user',
+  storage: Memory, // Include lib
+```

@@ -80,6 +80,14 @@ export default class Model {
           enumerable: true,
           get: prop.get.bind(instance)
         })
+
+        // Definindo sync para virtual props
+        if (prop.listener) {
+          this.syncMany(prop.listener, async () => {
+            const data = await this.getVirtualProps(key)
+            this.emit({[key]: data})
+          })
+        }
       }
     }
   }
@@ -153,12 +161,12 @@ export default class Model {
 
   /**
     * syncMany
-    * @description incroniza um alista de objectos retonando em um callback único
+    * @description sincroniza um array de objetos retonando em um callback único
   */
-  syncMany (obj, callback) {
+  syncMany (objs, callback) {
     var props = {}
 
-    for (let key in obj) {
+    objs.map(key => {
       props[key] = (err, val) => {
         if (err) {
           return callback(err)
@@ -166,7 +174,7 @@ export default class Model {
 
         callback(null, {[key]: val})
       }
-    }
+    })
 
     this.sync(props)
   }

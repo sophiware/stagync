@@ -23,15 +23,12 @@ module.exports = new Model({
     fullName: {
       async get () {
         const {firstName, lastName} = await this.get()
-        const data = await this.get()
-        console.log('data', data)
-        return firstName + '' + lastName
-      }
+        return firstName + ' - ' + lastName
+      },
+      listener: ['fisrtName', 'lastName']
     },
     age: {
       async get () {
-        const data = await this.get()
-        console.log('data', data)
         return 28
       }
     }

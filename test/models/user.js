@@ -3,7 +3,7 @@ const {Model} = require('../../lib/index')
 module.exports = new Model({
   database: 'stagyncTest',
   table: 'user',
-  type: 'memory',
+  type: 'localstorage',
   schema: {
     username: {
       type: 'string'

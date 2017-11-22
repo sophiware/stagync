@@ -19,10 +19,17 @@ export default class Model {
   }
 
   _importStorage () {
-    this.storage = require(`stagync-storage-${this.type}`)
+    try {
+      var Storage = require(`stagync-storage-${this.type}`)
 
-    if (this.storage.default) {
-      this.storage = this.storage.default
+      if (Storage.default) {
+        Storage = Storage.default
+      }
+
+      this.storage = new Storage(this)
+    } catch (err) {
+      console.info(`'Type '${this.type}' not found, try running 'npm i --save stagync-storage-${this.type}'`)
+      throw new Error(err.message)
     }
   }
 
@@ -309,7 +316,7 @@ export default class Model {
   async set (props, force = false) {
     if (this.virtualProps) {
       for (let key in props) {
-        if (this.virtualProps[key]) {
+        if (this.virtualProps[key]) {result
           throw new Error(`You can not modify a virtual property: ${key}`)
         }
       }
@@ -386,7 +393,7 @@ export default class Model {
     const that = this
 
     return new Promise((resolve, reject) => {
-      that.storage.getItem(that.key, async (err, value) => {
+      that.storage.getItem(that.key, (err, value) => {
         if (err) {
           return reject(err)
         }

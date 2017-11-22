@@ -1,7 +1,7 @@
 const {Model} = require('../../lib/index')
 
 module.exports = new Model({
-  database: 'ceadercoor',
+  database: 'stagyncTest',
   table: 'user',
   type: 'memory',
   schema: {

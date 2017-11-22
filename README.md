@@ -6,56 +6,8 @@ O Stagync foi criado para suprir a necessidade de controle de dados no cliente. 
 ### Curiosidade
 O nome *Stagync* vem na junção das palavras *Storage* e *Sync*
 
-# Schema
-Exemplo de um Model
-```javascript
-// models/user.js
-import { Model } from 'stagync'
-
-export default new Model({
-  database: 'myDataBases',
-  table: 'user',
-  type: 'memory',
-  schema: {
-    age: {
-      type: 'number'
-    },
-    active: {
-      type: 'boolean',
-      default: true
-    },
-    tags: {
-      type: 'array'
-    },
-    firstName: {
-      type: 'string'
-    },
-    lastName: {
-      type: 'string'
-    },
-    fullName: { // Virtual prop
-      async get () {
-        const {firstName, lastName} = await this.get()
-        return firstName + ' ' + lastName
-      },
-      listener: ['fisrtName', 'lastName']
-    },
-    nickname: { // Virtual prop
-      get () {
-        return 'assis'
-      }
-    }
-  },
-  methods: {
-    getNames(){
-      const { nickname, firstName, lastName, fullName } = await this.get()
-      return { nickname, firstName, lastName, fullName }
-    }
-  }
-})
-```
-
 ## Exemplo de uso
+./src/app.js
 ```javascript
 import User from './models/user'
 
@@ -108,6 +60,131 @@ Persistes os dados em sessão para navegadores
   npm install --save stagync stagync-storage-memory
 ```
 
+# Model
+Os modelos de dados definem tipo de persistencia, nome da table, nome do banco de dados, esquema e metodos adicionais.
+Através de um modelo de dados você pode gerir dados especificos em sua aplicação.
+
+## Exemplo
+./src/models/user.js
+```javascript
+import { Model } from 'stagync'
+
+export default new Model({
+  database: 'myDataBase',
+  table: 'user',
+  type: 'memory',
+  schema: {
+    age: {
+      type: 'number'
+    },
+    active: {
+      type: 'boolean',
+      default: true
+    },
+    tags: {
+      type: 'array'
+    },
+    firstName: {
+      type: 'string'
+    },
+    lastName: {
+      type: 'string'
+    },
+    fullName: { // Virtual prop
+      async get () {
+        const {firstName, lastName} = await this.get()
+        return firstName + ' ' + lastName
+      },
+      listener: ['fisrtName', 'lastName']
+    },
+    nickname: { // Virtual prop
+      get () {
+        return 'assis'
+      }
+    }
+  },
+  methods: {
+    getNames(){
+      const { nickname, firstName, lastName, fullName } = await this.get()
+      return { nickname, firstName, lastName, fullName }
+    }
+  }
+})
+```
+
+## database
+Nome do seu banco de dados
+```javascript
+database: 'myDataBase'
+```
+
+## table
+Nome da tabela de dados
+```javascript
+table: 'user'
+```
+
+## type
+Tipo de armazenamento. Aqui você precisará de um [*stagync-storage*](#stagync-storage) para conectar seu modelo de dados a um local de armazenamento.
+Você não deve por o nome completo do plugin, somente o seu sufixo, por exemplo, se deseja usar o plugin *stagync-storage-memory* você definira `type: 'memory'`.
+```javascript
+type: 'memory'
+```
+
+## schema
+Esquema de dados. Você precisa definir um esquema de dados para seu modelo, dados não definidos no schema retorarão com erro ao tentar adiciona-los.
+
+Cada propriedade de dados podem receber os seguinte atributos:
+ - **type**: Definição de typo de dado, possibilidades:
+ - - string
+ - - number
+ - - boolean
+ - - array
+ - - object
+ - - function
+ - - xml
+ - **default**: Valor padrão da propriedade.
+ - **get**: Defini que a propriedade declarada é uma [virtual prop](#virtual-props)
+ - **listener** Quando a propriedade é uma *virtual prop*, a propriedade escuta os valores de listener e emitir sincronismo quando esses valores são modificados, veja [lisneter](#listener)
+
+ ## methods
+ Metodos adicionas que poderão ser chamados com seu model
+ ```javascript
+ methods: {
+     loginUser(){
+       const { username, password } = await this.get()
+
+       try{
+         const token = await rest.post('user/login', { username, password })
+         this.set({ token })
+
+       } catch (err) {
+         if(err.statusCode === 401)
+         alert('Usuário ou senha inválidos.')
+       }
+     }
+ }
+ ```
+
+ ### Exemplo
+```javascript
+schema: {
+  age: {
+    type: 'number',
+    default: 28
+  },
+  name: {
+    type: 'string'
+  },
+  nameAge { // Virtual Prop
+    get(){
+      const { name, age } = this.get()
+      return `${name} com ${age}`
+    },
+    listener: ['name', 'age']
+  }
+```
+
 ## Virtual props
 Defini propriedades que executam uma função. Essa função pode retornar propriedaes tratadas ou qualquer outro valor, podendo ser assíncrona ou sincrona.
 ```javascript
@@ -138,6 +215,7 @@ User.set({ fistName: 'Martin' })
 //..
 ```
 
+# Metodos
 ## Setter and Getter
 ### set(props)
 Adiciona dados por um objeto ao storage

@@ -10,7 +10,7 @@ export default class Model {
     this._importStorage()
     this._prepareMethods()
     this._prepareVirtualProps()
-    this._prepareDefaultValues()
+    this._prepareSchema()
 
     // Caso tenha definido init em methods
     if (this.init) {
@@ -40,15 +40,20 @@ export default class Model {
     this.virtualProps = {}
     this.stillEmitter = config.still || false
     this.currentVirtualProp = null
+    this.propsTypes = {}
   }
 
-  _prepareDefaultValues (emitter = true) {
+  _prepareSchema (emitter = true) {
     if (!this.schema) {
       return null
     }
 
     for (let key in this.schema) {
       let prop = this.schema[key]
+
+      if ('type' in prop) {
+        this.propsTypes[key] = prop.type
+      }
 
       if ('default' in prop) {
         this.set({
@@ -260,6 +265,44 @@ export default class Model {
     return this.set(data, force)
   }
 
+  _functionName (fun) {
+    var ret = fun.toString()
+    ret = ret.substr('function '.length)
+    ret = ret.substr(0, ret.indexOf('('))
+    return ret
+  }
+
+  checkPropTypes (props) {
+    for (let key in props) {
+      let type = typeof props[key]
+      let compare = this.propsTypes[key]
+
+      if (compare === 'array') {
+        if (!Array.isArray(props[key])) {
+          throw new Error(`The ${key} property should be a ${compare}, but it is ${type}`)
+        }
+
+        continue
+      }
+
+      if (type !== compare) {
+        throw new Error(`The ${key} property should be a ${compare}, but it is ${type}`)
+      }
+    }
+
+    return true
+  }
+
+  _findInSchema (props) {
+    for (let key in props) {
+      if (!this.schema[key]) {
+        throw new Error(`The ${key} property does not exist without scheme`)
+      }
+    }
+
+    return true
+  }
+
   /**
    * Modifica uma propriedade
    */
@@ -274,7 +317,9 @@ export default class Model {
 
     // Força a execução sem a validação
     if (!force) {
-      props = await this.validation(props)
+      if (this._findInSchema(props) && this.propsTypes && this.checkPropTypes(props)) {
+        props = await this.validation(props)
+      }
     }
 
     if (!props) {

@@ -13,6 +13,7 @@
     "babel-polyfill": "^6.26.0",
     "clone": "^2.1.1",
     "deepmerge": "^2.0.0",
+    "prop-types": "^15.6.0",
     "stagync-storage-memory": "0.0.1"
   },
   "devDependencies": {

@@ -39,8 +39,9 @@ const handler = async () => {
   })
 
   console.log('----set----')
-  await User.set({firstName: Date.now()})
-  await User.set({lastName: `${Date.now()}@email.com`})
+  await User.set({firstName: Date.now().toString()})
+  await User.set({lastName: Date.now()})
+  await User.set({tags: [1, 2, 3, 4]})
 
   console.log('----get----')
   const data6 = await User.get()

@@ -6,24 +6,27 @@ module.exports = new Model({
   type: 'memory',
   schema: {
     username: {
-      type: String
+      type: 'string'
     },
-    nickname: {
-      type: String
+    active: {
+      type: 'boolean'
     },
     email: {
-      type: String
+      type: 'string'
+    },
+    tags: {
+      type: 'array'
     },
     firstName: {
-      type: String
+      type: 'string'
     },
     lastName: {
-      type: String
+      type: 'number'
     },
     fullName: {
       async get () {
         const {firstName, lastName} = await this.get()
-        return firstName + ' - ' + lastName
+        return firstName + ' ' + lastName
       },
       listener: ['fisrtName', 'lastName']
     },

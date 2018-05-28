@@ -68,11 +68,12 @@ Através de um modelo de dados você pode gerir dados especificos em sua aplica�
 ./src/models/user.js
 ```javascript
 import { Model } from 'stagync'
+import Memory  from 'stagync-storage-memory'
 
 export default new Model({
   database: 'myDataBase',
   table: 'user',
-  type: 'memory',
+  storage: Memory,
   schema: {
     age: {
       type: 'number'
@@ -124,11 +125,16 @@ Nome da tabela de dados
 table: 'user'
 ```
 
-## type
+## storage
 Tipo de armazenamento. Aqui você precisará de um [*stagync-storage*](#stagync-storage) para conectar seu modelo de dados a um local de armazenamento.
-Você não deve por o nome completo do plugin, somente o seu sufixo, por exemplo, se deseja usar o plugin *stagync-storage-memory* você definira `type: 'memory'`.
 ```javascript
-type: 'memory'
+import Memory  from 'stagync-storage-memory'
+
+export default new Model({
+  // ...
+  storage: Memory
+  // ...
+}
 ```
 
 ## schema
@@ -197,8 +203,7 @@ fullName: { // Virtual prop
   listener: ['fisrtName', 'lastName']
 }
 
-//... index.js
-const fullName = User.get('fullName')
+index.index.jsxt fullName = User.get('fullName')
 console.log(fullName) // Philippe Assis
 ```
 #### listener

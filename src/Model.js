@@ -64,24 +64,21 @@ export default class Model {
     }
   }
 
+  // TODO: Criar for para props de setIfEmpty
   async setIfEmpty (key, prop) {
-    let values = {}
-    let count = 0
-
     try {
       const data = await this.get(key)
 
-      if (data === null) {
-        count++
-        values[keys[i]] = prop[keys[i]]
+      if (data !== null) {
+        return null
       }
     } catch (err) {
-      console.log(err)
+      return console.log(err)
     }
 
-    if (count > 0) {
-      this.set(values)
-    }
+    this.set({
+      [key]: prop
+    })
   }
 
   /**
@@ -414,9 +411,8 @@ export default class Model {
    * clear
    * @description Limpa toda tabela
    */
-  async clear (emitter) {
+  async clear () {
     const exec = await this.storage.removeItem(this.key)
-    this._prepareDefaultValues(emitter)
     return exec
   }
 
@@ -476,7 +472,7 @@ export default class Model {
 
         const dataStorage = await this.getStorageProps()
 
-        if (typeof dataStorage[item] === 'undefined') {
+        if (dataStorage === null || typeof dataStorage[item] === 'undefined') {
           return null
         }
 
@@ -517,6 +513,6 @@ export default class Model {
 
   destroy (callback) {
     this.discontinueAll()
-    this.clear(callback)
+    return this.clear()
   }
 }

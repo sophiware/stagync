@@ -59,10 +59,29 @@ export default class Model {
       }
 
       if ('default' in prop) {
-        this.set({
+        this.setIfEmpty({
           [key]: prop.default
         })
       }
+    }
+  }
+
+  async setIfEmpty (prop) {
+    let values = {}
+    const keys = Object.keys(prop)
+    let count = 0
+
+    for (let i = 0; keys.length; i++) {
+      const data = await this.get(keys[i])
+
+      if (!data) {
+        count++
+        values[keys[i]] = prop[keys[i]]
+      }
+    }
+
+    if (count > 0) {
+      return this.set(values)
     }
   }
 

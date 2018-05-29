@@ -71,17 +71,21 @@ export default class Model {
     const keys = Object.keys(prop)
     let count = 0
 
-    for (let i = 0; keys.length; i++) {
-      const data = await this.get(keys[i])
+    try {
+      for (let i = 0; i < keys.length; i++) {
+        const data = await this.get(keys[i])
 
-      if (!data) {
-        count++
-        values[keys[i]] = prop[keys[i]]
+        if (data === null) {
+          count++
+          values[keys[i]] = prop[keys[i]]
+        }
       }
+    } catch (err) {
+      console.log(err)
     }
 
     if (count > 0) {
-      return this.set(values)
+      this.set(values)
     }
   }
 

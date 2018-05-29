@@ -59,26 +59,21 @@ export default class Model {
       }
 
       if ('default' in prop) {
-        this.setIfEmpty({
-          [key]: prop.default
-        })
+        this.setIfEmpty(key, prop.default)
       }
     }
   }
 
-  async setIfEmpty (prop) {
+  async setIfEmpty (key, prop) {
     let values = {}
-    const keys = Object.keys(prop)
     let count = 0
 
     try {
-      for (let i = 0; i < keys.length; i++) {
-        const data = await this.get(keys[i])
+      const data = await this.get(key)
 
-        if (data === null) {
-          count++
-          values[keys[i]] = prop[keys[i]]
-        }
+      if (data === null) {
+        count++
+        values[keys[i]] = prop[keys[i]]
       }
     } catch (err) {
       console.log(err)
@@ -480,11 +475,17 @@ export default class Model {
         }
 
         const dataStorage = await this.getStorageProps()
-        return dataStorage[item] || null
+
+        if (typeof dataStorage[item] === 'undefined') {
+          return null
+        }
+
+        return dataStorage[item]
       }
 
       const data = await this.getStorageProps()
       const vProps = await this.getVirtualProps()
+
       return deepmerge(data, vProps)
     } catch (err) {
       throw err.message

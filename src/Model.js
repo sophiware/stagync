@@ -6,7 +6,7 @@ import clone from 'clone'
 const eventEmitter = new EventEmitter()
 
 export default class Model {
-  constructor (config) {
+  constructor(config) {
     this._prepareVars(config)
     this._importStorage()
     this._prepareMethods()
@@ -19,7 +19,7 @@ export default class Model {
     }
   }
 
-  _importStorage () {
+  _importStorage() {
     if (!this.config.storage) {
       throw new Error('You need to define a storage for this model. Learn how at https://github.com/sophiware/stagync#storage')
     }
@@ -31,7 +31,7 @@ export default class Model {
     }
   }
 
-  _prepareVars (config) {
+  _prepareVars(config) {
     this.config = config
     this.database = config.database
     this.table = config.table
@@ -46,7 +46,7 @@ export default class Model {
     this.propsTypes = {}
   }
 
-  _prepareSchema (emitter = true) {
+  _prepareSchema(emitter = true) {
     if (!this.schema) {
       return null
     }
@@ -65,7 +65,7 @@ export default class Model {
   }
 
   // TODO: Criar for para props de setIfEmpty
-  async setIfEmpty (key, prop) {
+  async setIfEmpty(key, prop) {
     try {
       const data = await this.get(key)
 
@@ -85,7 +85,7 @@ export default class Model {
    * _prepareVirtualProps
    * @description Prepara e atualizad os virual property
    */
-  _prepareVirtualProps () {
+  _prepareVirtualProps() {
     if (!this.schema) {
       return null
     }
@@ -109,18 +109,18 @@ export default class Model {
         if (prop.listener) {
           this.syncMany(prop.listener, async () => {
             const data = await this.getVirtualProps(key)
-            this.emit({ [key]: data })
+            this.emit({[key]: data})
           })
         }
       }
     }
   }
 
-  _virtualPropGetError (item) {
+  _virtualPropGetError(item) {
     throw new Error(`Unable to get virtual properties from a virtual property: ${item}`)
   }
 
-  _virtualPropGet (item) {
+  _virtualPropGet(item) {
     if (this.schema[item] && this.schema[item].get) {
       return this._virtualPropGetError(item)
     }
@@ -128,23 +128,23 @@ export default class Model {
     return this.getStorageProps(item)
   }
 
-  _prepareMethods () {
+  _prepareMethods() {
     if (this.methods) {
       for (let key in this.methods) {
-        if (!( key in this )) {
+        if (!(key in this)) {
           this[key] = this.methods[key].bind(this)
         }
       }
     }
   }
 
-  addEventName (name) {
+  addEventName(name) {
     if (this.eventsNames.indexOf(name) === -1) {
       this.eventsNames.push(name)
     }
   }
 
-  getPrefixName (prop, prefix) {
+  getPrefixName(prop, prefix) {
     const name = prefix
       ? `${prefix}${prop}:${this.type}`
       : `${this.prefixNameEvent}${prop}:${this.type}`
@@ -156,7 +156,7 @@ export default class Model {
    * sync
    * @description Sincrozina as propriedades, e executa o callback a cada atualização
    */
-  sync (props, getStart = true) {
+  sync(props, getStart = true) {
     for (let key in props) {
       eventEmitter.addListener(this.getPrefixName(key), props[key])
     }
@@ -176,7 +176,7 @@ export default class Model {
    * syncAll
    * @description Sincrozina todas as propriedades executanto um unico callback
    */
-  syncAll (callback) {
+  syncAll(callback) {
     eventEmitter.addListener(this.getPrefixName('all'), callback)
   }
 
@@ -184,7 +184,7 @@ export default class Model {
    * syncMany
    * @description sincroniza um array de objetos retonando em um callback único
    */
-  syncMany (objs, callback) {
+  syncMany(objs, callback) {
     let props = {}
 
     objs.map(key => {
@@ -193,7 +193,7 @@ export default class Model {
           return callback(err)
         }
 
-        callback(null, { [key]: val })
+        callback(null, {[key]: val})
       }
     })
 
@@ -205,7 +205,7 @@ export default class Model {
    * @description Quando sucesso: os emit's são passados em conjunto como objeto
    * @description Quando erro: os emit's são passados individualmente com o erro
    **/
-  emit (props, err) {
+  emit(props, err) {
     if (this.stillEmitter) {
       return null
     }
@@ -226,7 +226,7 @@ export default class Model {
     }
   }
 
-  async format (props) {
+  async format(props) {
     let result = {}
     const defaultError = 'Data formatting error'
 
@@ -247,7 +247,7 @@ export default class Model {
     return result
   }
 
-  async validation (props) {
+  async validation(props) {
     let result = {}
     const defaultError = 'Invalid data'
 
@@ -271,7 +271,7 @@ export default class Model {
    * merge
    * @description Mescla novos dados com os dados já salvos
    */
-  async merge (props, force = false) {
+  async merge(props, force = false) {
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
@@ -313,14 +313,14 @@ export default class Model {
     }
   }
 
-  _functionName (fun) {
+  _functionName(fun) {
     let ret = fun.toString()
     ret = ret.substr('function '.length)
     ret = ret.substr(0, ret.indexOf('('))
     return ret
   }
 
-  checkPropTypes (props) {
+  checkPropTypes(props) {
     for (let key in props) {
       let type = typeof props[key]
       let compare = this.propsTypes[key]
@@ -341,7 +341,7 @@ export default class Model {
     return true
   }
 
-  _findInSchema (props) {
+  _findInSchema(props) {
     for (let key in props) {
       if (!this.schema[key]) {
         throw new Error(`The ${key} property does not exist without scheme`)
@@ -355,7 +355,7 @@ export default class Model {
    * set
    * @description Modifica uma propriedade
    */
-  async set (props, force = false) {
+  async set(props, force = false) {
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
@@ -401,7 +401,7 @@ export default class Model {
    * still
    * @description Força a não emissão do evento ao modificar uma propriedade
    */
-  still () {
+  still() {
     const that = this
     that.stillEmitter = true
     return that
@@ -411,7 +411,7 @@ export default class Model {
    * clear
    * @description Limpa toda tabela
    */
-  async clear () {
+  async clear() {
     const exec = await this.storage.removeItem(this.key)
     return exec
   }
@@ -420,7 +420,7 @@ export default class Model {
    * remove
    * @description Remove uma propriedade
    */
-  async remove (prop) {
+  async remove(prop) {
     const exec = await this.set({
       [prop]: null
     }, true)
@@ -428,7 +428,7 @@ export default class Model {
     return exec
   }
 
-  getStorageProps () {
+  getStorageProps() {
     const that = this
 
     return new Promise((resolve, reject) => {
@@ -442,7 +442,7 @@ export default class Model {
     })
   }
 
-  async getVirtualProps (item) {
+  async getVirtualProps(item) {
     if (item) {
       const data = await this.virtualProps[item]
       return data
@@ -462,7 +462,7 @@ export default class Model {
    * get
    * @description Pega as propriedadades
    */
-  async get (item) {
+  async get(item) {
     try {
       if (item) {
         if (item in this.virtualProps) {
@@ -472,7 +472,7 @@ export default class Model {
 
         const dataStorage = await this.getStorageProps()
 
-        if (dataStorage === null || typeof dataStorage[item] === 'undefined') {
+        if (dataStorage === null || dataStorage === undefined || !(item in dataStorage)) {
           return null
         }
 
@@ -492,7 +492,7 @@ export default class Model {
    * discontinue
    * @description Remove o sincronismo de uma propriedade
    */
-  discontinue (name) {
+  discontinue(name) {
     const index = this.eventsNames.indexOf(name)
     if (index > -1) {
       eventEmitter.removeListener(this.eventsNames.length[index])
@@ -503,7 +503,7 @@ export default class Model {
    * discontinueAll
    * @description Remove o sincronismo de todas as propriedades
    */
-  discontinueAll () {
+  discontinueAll() {
     if (this.eventsNames.length > 0) {
       for (let key in this.eventsNames.length) {
         eventEmitter.removeListener(this.eventsNames.length[key])
@@ -511,7 +511,7 @@ export default class Model {
     }
   }
 
-  destroy (callback) {
+  destroy(callback) {
     this.discontinueAll()
     return this.clear()
   }

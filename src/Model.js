@@ -73,7 +73,7 @@ export default class Model {
         return null
       }
     } catch (err) {
-      return console.log(err)
+      return err
     }
 
     this.set({

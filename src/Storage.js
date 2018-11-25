@@ -5,7 +5,7 @@ import clone from 'clone'
 
 const eventEmitter = new EventEmitter()
 
-export default class Model {
+export default class Storage {
   constructor(config) {
     this._prepareVars(config)
     this._importStorage()
@@ -218,7 +218,7 @@ export default class Model {
       /**
        * Atualização de virtual props
        * Na atualização de qualquer dado, todas as vp são atualizadas para que
-       * o this contenha os dados atuais do Model
+       * o this contenha os dados atuais do Storage
        */
       for (let key in props) {
         eventEmitter.emit(this.getPrefixName(key), null, props[key])

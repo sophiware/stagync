@@ -9,7 +9,7 @@ O nome *Stagync* vem na junção das palavras *Storage* e *Sync*
 ## Exemplo de uso
 ./src/app.js
 ```javascript
-import User from './models/user'
+import User from './Storages/user'
 
 const handler = async () => {
   User.sync({
@@ -37,40 +37,34 @@ handler()
 
 
 # stagync-storage
-O Stagync não funciona sozinho. Para ultilizalo você precisa de um *stagync-storage*. Os stagync-storage são plugins que conectão o seu modelo de dados a um local de armazenamento.
+Stagync does not work alone. To use it you need a * stagync-storage *. Stagync-storage are plugins that connect your data model to a storage location.
 
-## Exemplo
+## Example
 ### [stagync-storage-memory](https://github.com/sophiware/stagync-storage-memory)
-Persistes os dados em memoria. Ou seja, uma variavel global é criada persistindo nela os dados salvos.
+You persist the data in memory. That is, a global variable is created by persisting in it the saved data.
 
-### [stagync-storage-native-async-storage](https://github.com/sophiware/stagync-storage-memory) (A fazer)
-Persistes dados ultilizando [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html)
+### [stagync-storage-native-async-storage](https://github.com/sophiware/stagync-storage-memory)
+You persist data using [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html)
 
-### [stagync-storage-localstorage](https://github.com/sophiware/stagync-storage-localstorage) (A fazer)
-Persistes os dados no local storage do navegador.
-
-### [stagync-storage-cookie](https://github.com/sophiware/stagync-storage-cookie) (A fazer)
-Persistes os dados em cookies para navegadores
-
-### [stagync-storage-session](https://github.com/sophiware/stagync-storage-session) (A fazer)
-Persistes os dados em sessão para navegadores
+### [stagync-storage-localforage](https://github.com/sophiware/stagync-storage-localforage) 
+You persist data using [LocalForage](https://github.com/localForage/localForage)
 
 # Instalação
 ```bash
   npm install --save stagync stagync-storage-memory
 ```
 
-# Model
-Os modelos de dados definem tipo de persistencia, nome da table, nome do banco de dados, esquema e metodos adicionais.
-Através de um modelo de dados você pode gerir dados especificos em sua aplicação.
+# Storage
+Storage defines persistence type, table name, database name, schema, and additional methods.
+Through a data storage you can manage specific data in your application.
 
-## Exemplo
-./src/models/user.js
+## Example
+./src/Storages/user.js
 ```javascript
-import { Model } from 'stagync'
+import { Storage } from 'stagync'
 import Memory  from 'stagync-storage-memory'
 
-export default new Model({
+export default new Storage({
   database: 'myDataBase',
   table: 'user',
   storage: Memory,
@@ -114,19 +108,20 @@ export default new Model({
 ```
 
 ## database
-Nome do seu banco de dados
+Name of your database
 ```javascript
 database: 'myDataBase'
 ```
 
 ## table
-Nome da tabela de dados
+Data table name
 ```javascript
 table: 'user'
 ```
 
 ## storage
-Tipo de armazenamento. Aqui você precisará de um [*stagync-storage*](#stagync-storage) para conectar seu modelo de dados a um local de armazenamento.
+Type of storage. Here you will need a [*stagync-storage*](#stagync-storage) to connect your data model to a storage location.
+
 ```javascript
 import Memory  from 'stagync-storage-memory'
 
@@ -138,9 +133,9 @@ export default new Model({
 ```
 
 ## schema
-Esquema de dados. Você precisa definir um esquema de dados para seu modelo, dados não definidos no schema retorarão com erro ao tentar adiciona-los.
+Data schema. You need to define a data schema for your model, data not defined in the schema will return with error when you try to add them.
 
-Cada propriedade de dados podem receber os seguinte atributos:
+Each data property can receive the following attributes:
  - **type**: Definição de typo de dado, possibilidades:
  - - string
  - - number
@@ -149,13 +144,14 @@ Cada propriedade de dados podem receber os seguinte atributos:
  - - object
  - - function
  - - xml
- - **default**: Valor padrão da propriedade.
- - **get**: Defini que a propriedade declarada é uma [virtual prop](#virtual-props)
+ - **default**: Default value of the property.
+ - **get**: Define that the declared property is a [virtual prop](#virtual-props)
  - **listener** Quando a propriedade é uma *virtual prop*, a propriedade escuta os valores de listener e emitir sincronismo quando esses valores são modificados, veja [lisneter](#listener)
-
+ - **listener** When the property is a * virtual * property, the property listens for the listener values and emits synchronization when those values are modified, see [lisneter](#listener)
+ 
  ## methods
- Metodos adicionas que poderão ser chamados com seu model
- ```javascript
+Additional methods that can be called with your model
+```javascript
  methods: {
      loginUser(){
        const { username, password } = await this.get()
@@ -172,7 +168,7 @@ Cada propriedade de dados podem receber os seguinte atributos:
  }
  ```
 
- ### Exemplo
+ ### Example
 ```javascript
 schema: {
   age: {
@@ -192,7 +188,8 @@ schema: {
 ```
 
 ## Virtual props
-Defini propriedades que executam uma função. Essa função pode retornar propriedaes tratadas ou qualquer outro valor, podendo ser assíncrona ou sincrona.
+Define properties that execute a function. This function can return treated properties or any other value, and can be asynchronous or synchronous.
+
 ```javascript
 //... models/user.js
 fullName: { // Virtual prop
@@ -206,8 +203,10 @@ fullName: { // Virtual prop
 index.index.jsxt fullName = User.get('fullName')
 console.log(fullName) // Philippe Assis
 ```
+
 #### listener
-Array com o o nome das propriedade dependente. Quando listener é definido em uma propriedade virtual essa propriedade emit um evento para sincronização quando as propriedades definidas em listener são atualizadas
+Array with the name of the dependent property. When listener is set to a virtual property this property emits an event for synchronization when the properties defined in listener are updated.
+
 ```javascript
 //...
 User.sync({
@@ -223,7 +222,8 @@ User.set({ fistName: 'Martin' })
 # Metodos
 ## Setter and Getter
 ### set(props)
-Adiciona dados por um objeto ao storage
+Adds data by an object to storage
+
 ```javascript
 User.set({
   nickname: 'Assis',
@@ -231,17 +231,20 @@ User.set({
 })
 ```
 ### get(prop)
-Recupera dados dos storage
+Recover data from storage.
+
 ```javascript
 const {nickname, tags} = await User.get()
 ```
-Você pode especificar a propriedade a ser recuperada
+You can specify the property to retrieve.
+
 ```javascript
 const data = await User.get('nickname')
 ```
 
 ### merge
-Mescla novos dados com dados já salvos
+Merge new data with data already saved.
+
 ```javascript
 User.merge({
   active: false
@@ -257,9 +260,10 @@ Result:
 */
 ```
 
-## Sincronizadores
+## Synchronizers
 ### sync(props)
-Sincroniza propriedades definidas em um objecto executando um callback toda vez em que a propriedade for atualizada
+Synchronizes properties defined on an object by executing a callback every time the property is updated.
+
 ```javascript
 User.sync({
   nickname (err, data) {
@@ -270,15 +274,16 @@ User.sync({
   },
 })
 ```
+
 ### syncAll(callback)
-Sincroniza todas as propriedades executando um callback a cada atualização e passando somente a propriedade atualizada
+Synchronizes all properties by performing a callback with each update and passing only the updated property.
 ```javascript
 User.syncAll((err, data) {
   //...
 })
 ```
 ### syncMany(props, callback)
-Sincroniza todas as propriedades passadas em um array executando um callback toda vez em que a propriedade for atualizada
+Synchronizes all the properties passed in an array by executing a callback every time the property is updated.
 ```javascript
 User.syncMany(['nickname', 'tags'], (err, data) {
   //...
@@ -286,19 +291,19 @@ User.syncMany(['nickname', 'tags'], (err, data) {
 ```
 
 ## clear()
-Limpa toda a tabela
+Clears the entire table
 ```javascript
 User.clear()
 ```
-# Stagync com Webpack
-Ao ultilizar Stagync com Webpack, você não deve definir o tipo de armazenamento com *type*. Ao invés disso, você deve importar diretamente a biblioteca do storage e definir em na propriedade **storage**.
-Caso contrário o webpack não conseguirá realizar o *require* no plugin. Tornando-se comum a exibição do erro: `Cannot find module "."`
+# Stagync with Webpack
+When using Stagync with Webpack, you should not set the type of storage with * type *. Instead, you must directly import the storage library and set in the ** storage ** property.
+Otherwise the webpack will not be able to perform the * require * in the plugin. Making it common to display the error: `Can not find module '." `
 
 ```javascript
-import { Model } from 'stagync'
+import { Storage } from 'stagync'
 import Memory from 'stagync-storage-memory' // Import lib
 
-export default new Model({
+export default new Storage({
   database: 'myDataBase',
   table: 'user',
   storage: Memory, // Include lib

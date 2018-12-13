@@ -6,20 +6,19 @@ import clone from 'clone'
 const eventEmitter = new EventEmitter()
 
 export default class Storage {
-  constructor(config) {
+  constructor (config) {
     this._prepareVars(config)
     this._importStorage()
     this._prepareMethods()
     this._prepareVirtualProps()
-    this._prepareSchema()
-
-    // Caso tenha definido init em methods
-    if (this.init) {
-      this.init()
-    }
+    this._prepareSchema().then(() => {
+      if (this.init) {
+        this.init()
+      }
+    })
   }
 
-  _importStorage() {
+  _importStorage () {
     if (!this.config.storage) {
       throw new Error('You need to define a storage for this model. Learn how at https://github.com/sophiware/stagync#storage')
     }
@@ -31,7 +30,7 @@ export default class Storage {
     }
   }
 
-  _prepareVars(config) {
+  _prepareVars (config) {
     this.config = config
     this.database = config.database
     this.table = config.table
@@ -46,7 +45,7 @@ export default class Storage {
     this.propsTypes = {}
   }
 
-  _prepareSchema(emitter = true) {
+  async _prepareSchema () {
     if (!this.schema) {
       return null
     }
@@ -59,13 +58,13 @@ export default class Storage {
       }
 
       if ('default' in prop) {
-        this.setIfEmpty(key, prop.default)
+        await this.setIfEmpty(key, prop.default)
       }
     }
   }
 
   // TODO: Criar for para props de setIfEmpty
-  async setIfEmpty(key, prop) {
+  async setIfEmpty (key, prop) {
     try {
       const data = await this.get(key)
 
@@ -76,7 +75,7 @@ export default class Storage {
       return err
     }
 
-    this.set({
+    return await this.set({
       [key]: prop
     })
   }
@@ -85,7 +84,7 @@ export default class Storage {
    * _prepareVirtualProps
    * @description Prepara e atualizad os virual property
    */
-  _prepareVirtualProps() {
+  _prepareVirtualProps () {
     if (!this.schema) {
       return null
     }
@@ -116,11 +115,11 @@ export default class Storage {
     }
   }
 
-  _virtualPropGetError(item) {
+  _virtualPropGetError (item) {
     throw new Error(`Unable to get virtual properties from a virtual property: ${item}`)
   }
 
-  _virtualPropGet(item) {
+  _virtualPropGet (item) {
     if (this.schema[item] && this.schema[item].get) {
       return this._virtualPropGetError(item)
     }
@@ -128,7 +127,7 @@ export default class Storage {
     return this.getStorageProps(item)
   }
 
-  _prepareMethods() {
+  _prepareMethods () {
     if (this.methods) {
       for (let key in this.methods) {
         if (!(key in this)) {
@@ -138,13 +137,13 @@ export default class Storage {
     }
   }
 
-  addEventName(name) {
+  addEventName (name) {
     if (this.eventsNames.indexOf(name) === -1) {
       this.eventsNames.push(name)
     }
   }
 
-  getPrefixName(prop, prefix) {
+  getPrefixName (prop, prefix) {
     const name = prefix
       ? `${prefix}${prop}:${this.type}`
       : `${this.prefixNameEvent}${prop}:${this.type}`
@@ -156,7 +155,7 @@ export default class Storage {
    * sync
    * @description Sincrozina as propriedades, e executa o callback a cada atualização
    */
-  sync(props, getStart = true) {
+  sync (props, getStart = true) {
     for (let key in props) {
       eventEmitter.addListener(this.getPrefixName(key), props[key])
     }
@@ -176,7 +175,7 @@ export default class Storage {
    * syncAll
    * @description Sincrozina todas as propriedades executanto um unico callback
    */
-  syncAll(callback) {
+  syncAll (callback) {
     eventEmitter.addListener(this.getPrefixName('all'), callback)
   }
 
@@ -184,7 +183,7 @@ export default class Storage {
    * syncMany
    * @description sincroniza um array de objetos retonando em um callback único
    */
-  syncMany(objs, callback) {
+  syncMany (objs, callback) {
     let props = {}
 
     objs.map(key => {
@@ -205,7 +204,7 @@ export default class Storage {
    * @description Quando sucesso: os emit's são passados em conjunto como objeto
    * @description Quando erro: os emit's são passados individualmente com o erro
    **/
-  emit(props, err) {
+  emit (props, err) {
     if (this.stillEmitter) {
       return null
     }
@@ -226,7 +225,7 @@ export default class Storage {
     }
   }
 
-  async format(props) {
+  async format (props) {
     let result = {}
     const defaultError = 'Data formatting error'
 
@@ -247,7 +246,7 @@ export default class Storage {
     return result
   }
 
-  async validation(props) {
+  async validation (props) {
     let result = {}
     const defaultError = 'Invalid data'
 
@@ -271,7 +270,7 @@ export default class Storage {
    * merge
    * @description Mescla novos dados com os dados já salvos
    */
-  async merge(props, force = false) {
+  async merge (props, force = false) {
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
@@ -313,14 +312,14 @@ export default class Storage {
     }
   }
 
-  _functionName(fun) {
+  _functionName (fun) {
     let ret = fun.toString()
     ret = ret.substr('function '.length)
     ret = ret.substr(0, ret.indexOf('('))
     return ret
   }
 
-  checkPropTypes(props) {
+  checkPropTypes (props) {
     for (let key in props) {
       let type = typeof props[key]
       let compare = this.propsTypes[key]
@@ -341,7 +340,7 @@ export default class Storage {
     return true
   }
 
-  _findInSchema(props) {
+  _findInSchema (props) {
     for (let key in props) {
       if (!this.schema[key]) {
         throw new Error(`The ${key} property does not exist without scheme`)
@@ -351,11 +350,41 @@ export default class Storage {
     return true
   }
 
+  _transform (props) {
+    if (!props) {
+      return props
+    }
+
+    let obj = {}
+
+    Object.keys(props).map(key => {
+      obj[key] = {
+        _data: props[key]
+      }
+    })
+
+    return obj
+  }
+
+  _resolve (props) {
+    if (!props) {
+      return props
+    }
+
+    let obj = {}
+
+    Object.keys(props).map(key => {
+      obj[key] = props[key]._data
+    })
+
+    return obj
+  }
+
   /**
    * set
    * @description Modifica uma propriedade
    */
-  async set(props, force = false) {
+  async set (props, force = false) {
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
@@ -378,11 +407,15 @@ export default class Storage {
     // Formata os valores caso a formação esteja configura no schema
     props = await this.format(props)
 
+    props = this._transform(props)
+
     const that = this
 
     try {
       return await new Promise((resolve, reject) => {
         this.storage.setItem(that.key, props, (err) => {
+          props = that._resolve(props)
+
           if (err) {
             that.emit(props, err)
             return reject(err)
@@ -401,7 +434,7 @@ export default class Storage {
    * still
    * @description Força a não emissão do evento ao modificar uma propriedade
    */
-  still() {
+  still () {
     const that = this
     that.stillEmitter = true
     return that
@@ -411,7 +444,7 @@ export default class Storage {
    * clear
    * @description Limpa toda tabela
    */
-  async clear() {
+  async clear () {
     const exec = await this.storage.removeItem(this.key)
     return exec
   }
@@ -420,7 +453,7 @@ export default class Storage {
    * remove
    * @description Remove uma propriedade
    */
-  async remove(prop) {
+  async remove (prop) {
     const exec = await this.set({
       [prop]: null
     }, true)
@@ -428,7 +461,7 @@ export default class Storage {
     return exec
   }
 
-  getStorageProps() {
+  getStorageProps () {
     const that = this
 
     return new Promise((resolve, reject) => {
@@ -437,12 +470,12 @@ export default class Storage {
           return reject(err)
         }
 
-        resolve(value)
+        resolve(that._resolve(value))
       })
     })
   }
 
-  async getVirtualProps(item) {
+  async getVirtualProps (item) {
     if (item) {
       const data = await this.virtualProps[item]
       return data
@@ -462,7 +495,7 @@ export default class Storage {
    * get
    * @description Pega as propriedadades
    */
-  async get(item) {
+  async get (item) {
     try {
       if (item) {
         if (item in this.virtualProps) {
@@ -492,10 +525,29 @@ export default class Storage {
    * discontinue
    * @description Remove o sincronismo de uma propriedade
    */
-  discontinue(name) {
+  discontinue (name) {
     const index = this.eventsNames.indexOf(name)
     if (index > -1) {
       eventEmitter.removeListener(this.eventsNames.length[index])
+    }
+  }
+
+  async restoreDefaultValues () {
+    const keys = Object.keys(this.schema)
+
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i]
+      let prop = this.schema[key]
+
+      if ('default' in prop) {
+        await this.set({
+          [key]: prop.default
+        }, true)
+      } else if (!('get' in prop)) {
+        await this.set({
+          [key]: null
+        }, true)
+      }
     }
   }
 
@@ -503,7 +555,7 @@ export default class Storage {
    * discontinueAll
    * @description Remove o sincronismo de todas as propriedades
    */
-  discontinueAll() {
+  discontinueAll () {
     if (this.eventsNames.length > 0) {
       for (let key in this.eventsNames.length) {
         eventEmitter.removeListener(this.eventsNames.length[key])
@@ -511,7 +563,7 @@ export default class Storage {
     }
   }
 
-  destroy(callback) {
+  destroy (callback) {
     this.discontinueAll()
     return this.clear()
   }

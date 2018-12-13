@@ -295,6 +295,12 @@ Clears the entire table
 ```javascript
 User.clear()
 ```
+
+## restoreDefaultValues()
+Restores the data to the default values registered in the schema
+```javascript
+User.restoreDefaultValues()
+```
 # Stagync with Webpack
 When using Stagync with Webpack, you should not set the type of storage with * type *. Instead, you must directly import the storage library and set in the ** storage ** property.
 Otherwise the webpack will not be able to perform the * require * in the plugin. Making it common to display the error: `Can not find module '." `

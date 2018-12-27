@@ -25,6 +25,10 @@ export default class Storage {
     })
   }
 
+  createInstance () {
+    return new Storage(this.config)
+  }
+
   _importStorage () {
     if (!this.config.storage) {
       throw new Error('You need to define a storage for this model. Learn how at https://github.com/sophiware/stagync#storage')

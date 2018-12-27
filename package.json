@@ -1,6 +1,6 @@
 {
   "name": "stagync",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Persistes modeled data and synchronizes",
   "main": "lib/index.js",
   "scripts": {

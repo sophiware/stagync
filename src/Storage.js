@@ -123,7 +123,6 @@ export default class Storage {
         // Definindo sync para virtual props
         if (prop.listener) {
           this.syncMany(prop.listener, async () => {
-            console.log('emit_virtual_prop')
             const data = await this.getVirtualProps(key)
             this.emit({ [key]: data })
           })
@@ -205,7 +204,6 @@ export default class Storage {
   emitEvent (name, ...args) {
     const eventsNames = this.getAllEventsNames(name)
     eventsNames.map(eventName => {
-      console.log([eventName, ...args])
       eventEmitter.emit(eventName, ...args)
     })
   }

@@ -2,8 +2,15 @@ import 'babel-polyfill'
 import EventEmitter from 'events'
 import deepmerge from 'deepmerge'
 import clone from 'clone'
+import uuid from 'uuid/v4'
 
 const eventEmitter = new EventEmitter()
+let eventsNamesStorage = {
+  local: {},
+  global: []
+}
+
+window.eventsNamesStorage = eventsNamesStorage
 
 export default class Storage {
   constructor (config) {
@@ -24,7 +31,8 @@ export default class Storage {
     }
 
     try {
-      this.storage = new this.config.storage(this)
+      const ConfigStorage = this.config.storage
+      this.storage = new ConfigStorage(this)
     } catch (err) {
       throw new Error('An error occurred while trying to load storage', err)
     }
@@ -38,9 +46,10 @@ export default class Storage {
     this.key = `@${this.database}:${this.table}`
     this.prefixNameEvent = `${this.key}:`
     this.schema = config.schema || null
-    this.type = config.type || null
-    this.eventsNames = []
+    this.uuid = uuid()
+    eventsNamesStorage.local[this.uuid] = []
     this.virtualProps = {}
+    this._virtualProps = {}
     this.stillEmitter = config.still || false
     this.propsTypes = {}
   }
@@ -75,9 +84,11 @@ export default class Storage {
       return err
     }
 
-    return await this.set({
+    const set = await this.set({
       [key]: prop
     })
+
+    return set
   }
 
   /**
@@ -93,6 +104,7 @@ export default class Storage {
       let prop = this.schema[key]
 
       if (typeof prop.get === 'function') {
+        this._virtualProps[key] = prop
         const instance = clone(this)
 
         // Substitui o this.get para evitar loop infinito
@@ -107,8 +119,9 @@ export default class Storage {
         // Definindo sync para virtual props
         if (prop.listener) {
           this.syncMany(prop.listener, async () => {
+            console.log('emit_virtual_prop')
             const data = await this.getVirtualProps(key)
-            this.emit({[key]: data})
+            this.emit({ [key]: data })
           })
         }
       }
@@ -137,18 +150,60 @@ export default class Storage {
     }
   }
 
-  addEventName (name) {
-    if (this.eventsNames.indexOf(name) === -1) {
-      this.eventsNames.push(name)
+  addEventStorage (name) {
+    if (eventsNamesStorage.local[this.uuid].indexOf(name) === -1 && eventsNamesStorage.global.indexOf(name) === -1) {
+      eventsNamesStorage.local[this.uuid].push(name)
+      eventsNamesStorage.global.push(name)
+
+      return true
     }
+
+    return false
   }
 
-  getPrefixName (prop, prefix) {
-    const name = prefix
-      ? `${prefix}${prop}:${this.type}`
-      : `${this.prefixNameEvent}${prop}:${this.type}`
-    this.addEventName(name)
+  getEventName (prop, uuid = false) {
+    let name = `${this.prefixNameEvent}${prop}`
+
+    if (uuid) {
+      name += `:${this.uuid}`
+    }
+
     return name
+  }
+
+  addEvent (name, listener) {
+    const eventName = this.getEventName(name, true)
+    this.addEventStorage(eventName)
+    eventEmitter.addListener(eventName, listener)
+  }
+
+  getVirtualPropsListeners (name) {
+    if (this._virtualProps[name] && this._virtualProps[name].listener) {
+      return this._virtualProps[name].listener
+    }
+
+    return null
+  }
+
+  getAllEventsNames (name) {
+    let eventsNames = []
+
+    const prefix = this.getEventName(name, false)
+    eventsNamesStorage.global.map(eventName => {
+      if (eventName.indexOf(prefix) > -1) {
+        eventsNames.push(eventName)
+      }
+    })
+
+    return eventsNames
+  }
+
+  emitEvent (name, ...args) {
+    const eventsNames = this.getAllEventsNames(name)
+    eventsNames.map(eventName => {
+      console.log([eventName, ...args])
+      eventEmitter.emit(eventName, ...args)
+    })
   }
 
   /**
@@ -157,7 +212,7 @@ export default class Storage {
    */
   sync (props, getStart = true) {
     for (let key in props) {
-      eventEmitter.addListener(this.getPrefixName(key), props[key])
+      this.addEvent(key, props[key])
     }
 
     if (getStart) {
@@ -176,7 +231,7 @@ export default class Storage {
    * @description Sincrozina todas as propriedades executanto um unico callback
    */
   syncAll (callback) {
-    eventEmitter.addListener(this.getPrefixName('all'), callback)
+    this.addEvent('all', callback)
   }
 
   /**
@@ -192,7 +247,7 @@ export default class Storage {
           return callback(err)
         }
 
-        callback(null, {[key]: val})
+        callback(null, { [key]: val })
       }
     })
 
@@ -209,10 +264,10 @@ export default class Storage {
       return null
     }
 
-    eventEmitter.emit(this.getPrefixName('all'), err, props)
+    this.emitEvent('all', err, props)
 
     if (err) {
-      eventEmitter.emit(this.getPrefixName(props), err)
+      this.emitEvent(props, err)
     } else {
       /**
        * Atualização de virtual props
@@ -220,7 +275,7 @@ export default class Storage {
        * o this contenha os dados atuais do Storage
        */
       for (let key in props) {
-        eventEmitter.emit(this.getPrefixName(key), null, props[key])
+        this.emitEvent(key, null, props[key])
       }
     }
   }
@@ -526,10 +581,15 @@ export default class Storage {
    * @description Remove o sincronismo de uma propriedade
    */
   discontinue (name) {
-    const index = this.eventsNames.indexOf(name)
+    const eventName = this.getEventName(name, true)
+    const index = eventsNamesStorage.local[this.uuid].indexOf(eventName)
+
     if (index > -1) {
-      eventEmitter.removeListener(this.eventsNames.length[index])
+      eventEmitter.removeListener(eventName, () => {})
+      this.removeByEventNameStorage(eventName)
     }
+
+    return eventName
   }
 
   async restoreDefaultValues () {
@@ -551,19 +611,54 @@ export default class Storage {
     }
   }
 
+  removeByEventNameStorage (eventName) {
+    const localIndex = eventsNamesStorage.local[this.uuid].indexOf(eventName)
+    const globalIndex = eventsNamesStorage.global.indexOf(eventName)
+
+    if (localIndex > -1) {
+      eventsNamesStorage.local[this.uuid].splice(localIndex, 1)
+    }
+
+    if (globalIndex > -1) {
+      eventsNamesStorage.global.splice(globalIndex, 1)
+    }
+  }
+
   /**
    * discontinueAll
    * @description Remove o sincronismo de todas as propriedades
    */
   discontinueAll () {
-    if (this.eventsNames.length > 0) {
-      for (let key in this.eventsNames.length) {
-        eventEmitter.removeListener(this.eventsNames.length[key])
-      }
+    let removed = []
+
+    if (eventsNamesStorage.local[this.uuid].length > 0) {
+      eventsNamesStorage.local[this.uuid].map(eventName => {
+        eventEmitter.removeListener(eventName, () => {
+          removed.push(eventName)
+          this.removeByEventNameStorage(eventName)
+        })
+      })
     }
+
+    return removed
   }
 
-  destroy (callback) {
+  discontinueGlobalAll () {
+    let removed = []
+
+    if (eventsNamesStorage.global.length > 0) {
+      eventsNamesStorage.gloabl.map(eventName => {
+        eventEmitter.removeListener(eventName, () => {
+          removed.push(eventName)
+          this.removeByEventNameStorage(eventName)
+        })
+      })
+    }
+
+    return removed
+  }
+
+  destroy () {
     this.discontinueAll()
     return this.clear()
   }

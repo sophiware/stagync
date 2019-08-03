@@ -4,6 +4,7 @@ title: Create storage
 nav_order: 2
 description: "Create storage"
 permalink: /basic-use/create-storage
+parent: Basic use
 ---
 
 #### Create Storage

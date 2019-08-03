@@ -1,9 +1,10 @@
 ---
 layout: default
-title: Basic use 
+title: Basic use
 nav_order: 2
 description: "Welcome to Stagync!"
 permalink: /basic-use
+has_children: true
 ---
 # Basic use
 A brief demonstration of stagync usability.

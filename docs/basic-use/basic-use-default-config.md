@@ -4,6 +4,7 @@ title: Default config
 nav_order: 2
 description: "Default config"
 permalink: /basic-use/default-config
+parent: Basic use
 ---
 
 # Default setting

@@ -4,6 +4,7 @@ title: Get prop
 nav_order: 2
 description: "Get prop"
 permalink: /basic-use/get-prop
+parent: Basic use
 ---
 
 # Get Prop

@@ -4,6 +4,7 @@ title: Import
 nav_order: 2
 description: "Import"
 permalink: /basic-use/import
+parent: Basic use
 ---
 
 # Import

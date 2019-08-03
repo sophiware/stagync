@@ -10,7 +10,9 @@ let eventsNamesStorage = {
   global: []
 }
 
-window.eventsNamesStorage = eventsNamesStorage
+if (window) {
+  window.eventsNamesStorage = eventsNamesStorage
+}
 
 export default class Storage {
   constructor (config) {
@@ -56,6 +58,7 @@ export default class Storage {
     this._virtualProps = {}
     this.stillEmitter = config.still || false
     this.propsTypes = {}
+    this.syncErrorHandler = config.syncErrorHandler !== undefined ? config.syncErrorHandler : null
   }
 
   async _prepareSchema () {
@@ -88,11 +91,11 @@ export default class Storage {
       return err
     }
 
-    const set = await this.set({
+    const value = await this.set({
       [key]: prop
     })
 
-    return set
+    return value
   }
 
   /**
@@ -221,7 +224,11 @@ export default class Storage {
       this.getStorageProps().then(data => {
         for (let key in data) {
           if (key in props) {
-            props[key](null, data[key])
+            if (!this.syncErrorHandler) {
+              props[key](null, data[key])
+            } else {
+              props[key](data[key])
+            }
           }
         }
       })
@@ -266,18 +273,28 @@ export default class Storage {
       return null
     }
 
-    this.emitEvent('all', err, props)
+    if (!this.syncErrorHandler) {
+      this.emitEvent('all', err, props)
+    } else if (!err) {
+      this.emitEvent('all', props)
+    }
 
-    if (err) {
+    if (err && this.syncErrorHandler) {
+      this.syncErrorHandler(err)
+    } else if (err && !this.syncErrorHandler) {
       this.emitEvent(props, err)
-    } else {
+    } else if (!err) {
       /**
        * Atualização de virtual props
        * Na atualização de qualquer dado, todas as vp são atualizadas para que
        * o this contenha os dados atuais do Storage
        */
       for (let key in props) {
-        this.emitEvent(key, null, props[key])
+        if (!this.syncErrorHandler) {
+          this.emitEvent(key, null, props[key])
+        } else {
+          this.emitEvent(key, props[key])
+        }
       }
     }
   }
@@ -546,6 +563,10 @@ export default class Storage {
     }
 
     return result
+  }
+
+  getItem (item) {
+    return this.get(item)
   }
 
   /**

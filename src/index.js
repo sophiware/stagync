@@ -1,10 +1,14 @@
 import Storage from './Storage.js'
-import Util from './Util.js'
+import utils from './Utils.js'
 
-const Model = Storage
+const storages = utils.storages
+const createStorage = utils.createStorage
+const defaultConfig = utils.defaultConfig
 
 export {
-  Model,
   Storage,
-  Util
+  utils,
+  storages,
+  createStorage,
+  defaultConfig
 }

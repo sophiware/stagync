@@ -1,6 +1,6 @@
 {
   "name": "stagync",
-  "version": "0.2.4",
+  "version": "1.0.0",
   "description": "Persistes modeled data and synchronizes",
   "main": "lib/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "clone": "^2.1.1",
     "deepmerge": "^2.0.0",
     "prop-types": "^15.6.0",
-    "stagync-storage-memory": "0.0.1",
+    "stagync-storage-memory": "^0.0.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-const {Model} = require('../../lib/index')
+const {Model} = require('../../lib')
 
 module.exports = new Model({
   database: 'stagyncTest',

@@ -3,7 +3,7 @@ layout: default
 title: Home
 nav_order: 1
 description: "Persist and sync states and data."
-permalink: /
+permalink: /home
 ---
 # Intro
 

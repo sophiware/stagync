@@ -3,7 +3,6 @@ layout: default
 title: Set and Add prop
 nav_order: 2
 description: "Set and Add prop"
-permalink: /basic-use/set-and-add-prop
 parent: Basic use
 ---
 

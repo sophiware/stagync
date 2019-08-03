@@ -86,10 +86,10 @@ getProps()
 ```javascript
   await websites.set('urls', ['http://nodejs.com'])
   // or
-  wait websites.props.urls.set(['http://nodejs.com'])
+  await websites.props.urls.set(['http://nodejs.com'])
   
   // Insert
-  wait websites.props.urls.add('http://npmjs.com')
+  await websites.props.urls.add('http://npmjs.com')
 ```
 
 Now let's modify and insert new items to the `urls` property.

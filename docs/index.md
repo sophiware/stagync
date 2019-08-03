@@ -1,4 +1,4 @@
-# Stagync
+# Intro
 
 In short, Stagync is an event centralizer under data manipulation. That means with him,
 You can adjust the same data to various sources and with multiple listeners.
@@ -17,7 +17,7 @@ offering a simple and feature-rich api for manipulation and retrieval of data.
 With it we try to minimize the complexity of the application, improving the development and maintainability of the project.
 
 
-## Hello Stagync!
+# Hello Stagync
 A brief demonstration of stagync usability.
 
 ### Step 1

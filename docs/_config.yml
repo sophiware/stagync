@@ -1,2 +1,7 @@
 remote_theme: sophiware/just-the-docs
 logo: /assets/images/mini-banner.png
+search_enabled: true
+aux_links:
+  "Just the Docs on GitHub":
+    - "//github.com/pmarsceill/just-the-docs"
+

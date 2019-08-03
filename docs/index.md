@@ -1,3 +1,10 @@
+---
+layout: default
+title: Home
+nav_order: 1
+description: "Persist and sync states and data."
+permalink: /home
+---
 # Intro
 
 In short, Stagync is an event centralizer under data manipulation. That means with him,

@@ -1,4 +1,11 @@
-# Hello Stagync
+---
+layout: default
+title: Basic use 
+nav_order: 2
+description: "Welcome to Stagync!"
+permalink: /basic-use
+---
+# Basic use
 A brief demonstration of stagync usability.
 
 ### Step 1

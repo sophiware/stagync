@@ -69,6 +69,10 @@ class CreateProp {
   discontinue(){
     return this.that.discontinue(this.propName)
   }
+
+  still(){
+    return this.that.still()
+  }
 }
 
 export default class StorageProps extends Storage {

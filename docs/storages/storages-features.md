@@ -101,4 +101,13 @@ Restores the data to the default values registered in the schema.
 storages.websites.restoreDefaultValues()
 ```
 
+### still()
+
+Silences the emission of modification events for the context in which it was applied. 
+This is a chained method, returning to the instantiated and muted object.
+
+```javascript``
+storages.websites.still().set({urls: ['http://google.com']})
+```
+
 [Next: Storages props]({{ site.baseurl }}{% link storages/storages-props.md %})

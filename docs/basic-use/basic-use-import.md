@@ -20,4 +20,4 @@ Initially we need to import stagync and stagync-storage into our application. Us
 
 Let's use this example stagync-storage Memory, which is capable of storing data in memory, either in an app, website or backend.
 
-[Next: title basic-use-default-config.md]({{ site.baseurl }}{% link basic-use-default-config.md %})
+[Next:]({{ site.baseurl }}{% link basic-use-default-config.md %})

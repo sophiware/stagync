@@ -7,5 +7,3 @@ parent: Basic use
 ---
 
 ### Considerations
-
-[Next: Considerations]({{ site.baseurl }}{% link basic-use/basic-use-considerations.md %})

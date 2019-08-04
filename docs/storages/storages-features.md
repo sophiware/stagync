@@ -106,7 +106,7 @@ storages.websites.restoreDefaultValues()
 Silences the emission of modification events for the context in which it was applied. 
 This is a chained method, returning to the instantiated and muted object.
 
-```javascript``
+```javascript
 storages.websites.still().set({urls: ['http://google.com']})
 ```
 

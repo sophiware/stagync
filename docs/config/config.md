@@ -7,7 +7,6 @@ has_children: true
 ---
 
 ## Config
-
 You can set your storage settings in two ways.
 
 The first is directly in `createStorage` the second is `defaultConfig`.

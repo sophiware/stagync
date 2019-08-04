@@ -4,7 +4,6 @@ title: Config
 nav_order: 3
 description: "Config"
 has_children: true
-has_toc: false
 ---
 
 ## Config

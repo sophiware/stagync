@@ -6,7 +6,7 @@ description: "Get prop"
 parent: Basic use
 ---
 
-# Get Prop
+### Get Prop
 ```javascript
 import { storages } from 'stagync'
 

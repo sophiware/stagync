@@ -6,7 +6,7 @@ description: "Create storage"
 parent: Basic use
 ---
 
-#### Create Storage
+### Create Storage
 ```javascript
 createStorage({
   websites: {

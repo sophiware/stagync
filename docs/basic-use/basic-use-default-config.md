@@ -6,7 +6,7 @@ description: "Default config"
 parent: Basic use
 ---
 
-# Default setting
+### Default setting
 ```javascript
 defaultConfig({
   database: 'myDataBase',

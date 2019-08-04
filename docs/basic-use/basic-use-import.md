@@ -6,7 +6,7 @@ description: "Import"
 parent: Basic use
 ---
 
-# Import
+### Import
 ```javascript
 import { defaultConfig, createStorage } from 'stagync'
 import Memory from 'stagync-storage-memory'

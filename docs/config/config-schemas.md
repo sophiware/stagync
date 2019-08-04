@@ -7,3 +7,5 @@ parent: Config
 ---
 
 ## Schemas
+
+[Next: Methods]({{ site.baseurl }}{% link config/config-methods.md %})

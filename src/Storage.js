@@ -46,10 +46,11 @@ export default class Storage {
 
   _prepareVars (config) {
     this.config = config
+    this.name = config.name
     this.database = config.database
     this.table = config.table
     this.methods = config.methods || null
-    this.key = `@${this.database}:${this.table}`
+    this.key = `@${this.database}:${this.table || this.name}`
     this.prefixNameEvent = `${this.key}:`
     this.schema = config.schema || null
     this.uuid = uuid()

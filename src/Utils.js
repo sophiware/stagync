@@ -14,6 +14,9 @@ const storages = new Proxy({}, {
 
 export default {
   defaultConfig (config) {
+    delete config.schema
+    delete config.methods
+    
     stagyncUtilsLocalCache.defaultConfig = config
   },
   getCache (prop) {

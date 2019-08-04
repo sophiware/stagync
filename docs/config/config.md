@@ -8,46 +8,6 @@ has_children: true
 
 ## Config
 
-```javascript
-import { defaultConfig, createStorage } from 'stagync'
-import LocalForage from 'stagync-storage-localforage'
-
-defaultConfig({
-  database: 'sliweb',
-  storage: LocalForage,
-  drive: 'localstorage',
-  syncErrorHandler (err) {
-    console.log(err)
-  }   
-})
-
-createStorage({
-  websites: {
-    schema: {
-      urls: {
-        type: 'array',
-        default: [
-          'http://google.com',
-          'http://sophiware.com',
-          'http://github.com'
-        ]
-      },
-      time: {
-        type: 'number',
-        default: 2000
-      },
-      options: {
-        type: 'object',
-        default: {
-          active: true,
-          color: '#010101'
-        }
-      }
-    }
-  }
-})
-```
-
 You can set your storage settings in two ways.
 
 The first is directly in `createStorage` the second is `defaultConfig`.
@@ -56,55 +16,65 @@ it will only fit the scope of that storage. Already when defined
 in *defaultConfig*, it will be arrayed globally for all storages
 created.
 
+Below you will see a complex example of a storage configuration.
 
-## Configuration Properties
-
-### data base
-string
-{: .label }
-required
-{: .label .label-red }
-
-Define your database.
-
-
-### name
-string
-{: .label }
-required
-{: .label .label-red }
-
-Name of the store.
-
-
-### table
-deprecated
-{: .label .label-yellow }
-
-Redundancy of `name`.
-
-
-### syncErrorHandler
-function
-{: .label }
-
-Receive read errors or read all data.
-By declaring *syncErrorHandler* the handlers of *sync* only
-The first to receive the property value, `data => ...`.
-
+## Example
 ```javascript
-syncErrorHandler: (err) => {...} 
+defaultConfig({
+  database: 'myDb',
+  storage: LocalForage,
+  drive: 'localstorage',
+  syncErrorHandler (err) {
+    console.log(err)
+  }   
+})
+
+createStorage({
+    profiles: {
+        schema: {
+            age: {
+              type: 'number'
+            },
+            active: {
+              type: 'boolean',
+              default: true
+            },
+            tags: {
+              type: 'array'
+            },
+            firstName: {
+              type: 'string'
+            },
+            lastName: {
+              type: 'string'
+            },
+            fullName: { // Virtual prop
+              async get () {
+                const {firstName, lastName} = await this.get()
+                return firstName + ' ' + lastName
+              },
+              listener: ['fisrtName', 'lastName']
+            },
+            nickname: { // Virtual prop
+              get () {
+                return 'Assis'
+              }
+            }
+          },
+        methods: {
+            init(){
+                console.log(`Init storage ${this.name}`)
+            },
+            async getNames(){
+              const { nickname, firstName, lastName, fullName } = await this.get()
+              return { nickname, firstName, lastName, fullName }
+            }
+        }
+    }
+})
 ```
 
-### schemas
+In the following pages, we will understand the properties passed in the creation of this storage.
 
-Set the properties of your storage.
-
-[Learn more about schemas]({{ site.baseurl }}{% link config/config-schemas.md %})
-
-### methods
-
-Define custom metering for your storage
-
-[Learn more about methods]({{ site.baseurl }}{% link config/config-methods.md %})
+[Next: Reference]({{ site.baseurl }}{% link config/config-reference.md %})
 

@@ -93,4 +93,12 @@ Restores the data to the default values registered in the schema.
 storages.websites.restoreDefaultValues()
 ```
 
+### restoreDefaultValues()
+
+Restores the data to the default values registered in the schema.
+
+```javascript
+storages.websites.restoreDefaultValues()
+```
+
 [Next: Storages props]({{ site.baseurl }}{% link storages/storages-props.md %})

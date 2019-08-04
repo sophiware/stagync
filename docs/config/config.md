@@ -4,6 +4,7 @@ title: Config
 nav_order: 3
 description: "Config"
 has_children: true
+permalink: /config
 ---
 
 ## Config

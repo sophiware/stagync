@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Storages props
-nav_order: 1
+nav_order: 2
 description: "Storages props"
 parent: Storages
 ---
@@ -91,3 +91,4 @@ storages.websites.props.urls.reset()
 ```
 
 
+[Next: Disconnectors]({{ site.baseurl }}{% link disconnectors/disconnectors.md %})

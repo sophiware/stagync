@@ -59,6 +59,12 @@ class CreateProp {
   set (newValue) {
     return this.that.set({[this.propName]: newValue})
   }
+
+  sync (handler) {
+    return this.that.sync({
+      [this.propName]: handler
+    })
+  }
 }
 
 export default class StorageProps extends Storage {

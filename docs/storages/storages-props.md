@@ -59,10 +59,13 @@ Removes an item from an array or object. If the type is array,
 expect an index (type int), if object, expect the property name (type string).
 
 ```javascript
-storages.websites.props.urls.sync((err, data) => {})
+// ulrs = ['my', 'name', 'is']
+storages.websites.props.urls.remove(1)
+// ['my', 'is']
 
-// With syncErrorHandler defined.
-storages.websites.props.urls.sync((data) => {})
+// profiles = { name: 'Philippe', year: 1989}
+storages.websites.props.profiles.remove('name')
+// {year: 1989}
 ```
 
 ### props.*.sync(callback)

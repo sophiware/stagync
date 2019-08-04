@@ -40,3 +40,6 @@ The init method is always executed when storage starts.
 
 ### syncErrorHandler
 Same as config.syncErrorHandler
+
+[Next: Storages]({{ site.baseurl }}{% link storages/storages.md %})
+

@@ -3,7 +3,6 @@ layout: default
 title: Disconnectors
 nav_order: 5
 description: "Disconnectors"
-has_children: true
 permalink: /disconnectors
 ---
 ## Disconnectors

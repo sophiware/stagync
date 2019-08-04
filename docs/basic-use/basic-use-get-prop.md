@@ -47,3 +47,5 @@ At this point the value of the `urls` property should be this:
 ```javascript
 ['http://nodejs.com', 'http://npmjs.com']
 ```
+
+[Next: Set and add prop]({{ site.baseurl }}{% link basic-use/basic-use-set-add-prop.md %})

@@ -29,3 +29,5 @@ In our example we created the `website` storage with the` urls` property of type
 This means that when attempting to mill or redeem the `urls` property of the storage` websites` you will be required to use the `array` type. If it does not modify the property, it returns the default value.
 
 Now, let's see how to make our first CRUD in this storage.
+
+[Next: Get prop]({{ site.baseurl }}{% link basic-use/basic-use-get-prop.md %})

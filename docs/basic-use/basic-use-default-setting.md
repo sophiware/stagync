@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Default config
+title: Default setting
 nav_order: 2
-description: "Default config"
+description: "Default setting"
 parent: Basic use
 ---
 
@@ -14,3 +14,5 @@ defaultConfig({
 })
 ```
 Let's use `defaultConfig` to make it easier to configure our arrays. This feature allows one-time configuration of parameters that will be repeated when creating the arrays.
+
+[Next: Create storage]({{ site.baseurl }}{% link basic-use/basic-use-create-storage.md %})

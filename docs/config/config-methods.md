@@ -6,6 +6,9 @@ description: "Methods"
 parent: Config
 ---
 
+{: .no_toc }
+
+
 ## Methods
 Methods are additional features you can define in your storage. 
 Once defined, you can execute it from `methods`, example: `storageName.methods.youMethod`.

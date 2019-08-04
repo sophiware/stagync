@@ -6,8 +6,10 @@ description: "Schemas"
 parent: Config
 ---
 
-## Schemas
+{: .no_toc }
 
+
+## Schemas
 We have two models of props for storages, the `common props`, and the `virtual props`.
 In *common props* you can set the default type and value. These props can be modified.
 *Virtual props* perform a function every time they are called and trigger change events when a listener 

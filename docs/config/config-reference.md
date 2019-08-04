@@ -6,8 +6,9 @@ description: "Reference"
 parent: Config
 ---
 
-## Reference
+{: .no_toc }
 
+## Reference
 ### database
 string
 {: .label }
@@ -69,9 +70,6 @@ Define custom metering for your storage
 [Learn more about methods]({{ site.baseurl }}{% link config/config-methods.md %})
 
 [Next: Schemas]({{ site.baseurl }}{% link config/config-schemas.md %})
-
-# Navigation Structure
-{: .no_toc }
 
 ## Table of contents
 {: .no_toc .text-delta }

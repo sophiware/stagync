@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Get prop
-nav_order: 2
+nav_order: 4
 description: "Get prop"
 parent: Basic use
 ---

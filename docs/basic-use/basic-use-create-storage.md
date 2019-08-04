@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Create storage
-nav_order: 2
+nav_order: 3
 description: "Create storage"
 parent: Basic use
 ---

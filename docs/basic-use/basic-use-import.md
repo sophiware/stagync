@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Import
-nav_order: 2
+nav_order: 1
 description: "Import"
 parent: Basic use
 ---

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Set and Add prop
-nav_order: 2
+nav_order: 5
 description: "Set and Add prop"
 parent: Basic use
 ---

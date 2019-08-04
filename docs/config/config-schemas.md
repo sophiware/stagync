@@ -66,6 +66,9 @@ array
 When set, the virtual prop raises an event when one of the properties described in the array is modified.
 
 ### validation
+function
+{: .label }
+
 Validation Function Always performed before the prop is monified. Receives the future value of prop as a parameter, 
 be a common function, or asynchronous.
 

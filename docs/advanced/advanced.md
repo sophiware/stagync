@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Advanced
-nav_order: 2
+nav_order: 3
 description: "Stagync Advanced Documentation."
 permalink: /advanced
 has_children: true

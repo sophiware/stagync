@@ -12,15 +12,19 @@ Once defined, you can execute it from `methods`, example: `storageName.methods.y
 
 There are some methods that are standard for Stagync, and should be set here.
 
+Context is not its own storage method.
+
 ```javascript
 {
     methods: {
         init () {
             console.log(`Hello ${this.name}`)
         },
-        myMethod (data) {
-            console.log(`My method ${data}`)
-        }   
+        async sendMail (body) {
+            const { email } = await this.get()
+
+            request.post('/sendmail', { email, body })
+        }
     }
 }
 ```
@@ -31,7 +35,7 @@ To execute a custom method just call straight from your storage after it is moun
 ```javascript
 import { storages } from 'stagync'
 
-storage.websites.methods.myMethod('Ok!')
+storage.websites.methods.sendMail("This is your email.")
 ```
 
 ## Standard Methods

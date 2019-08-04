@@ -8,6 +8,46 @@ has_children: true
 
 ## Config
 
+```javascript
+import { defaultConfig, createStorage } from 'stagync/src'
+import LocalForage from 'stagync-storage-localforage'
+
+defaultConfig({
+  database: 'sliweb',
+  storage: LocalForage,
+  drive: 'localstorage',
+  syncErrorHandler (err) {
+    console.log(err)
+  }   
+})
+
+createStorage({
+  websites: {
+    schema: {
+      urls: {
+        type: 'array',
+        default: [
+          'http://google.com',
+          'http://sophiware.com',
+          'http://github.com'
+        ]
+      },
+      time: {
+        type: 'number',
+        default: 2000
+      },
+      options: {
+        type: 'object',
+        default: {
+          active: true,
+          color: '#010101'
+        }
+      }
+    }
+  }
+})
+```
+
 You can set your storage settings in two ways.
 
 The first is directly in `createStorage` the second is `defaultConfig`.
@@ -15,6 +55,8 @@ The difference is that when the setting is set in *createStorage*,
 it will only fit the scope of that storage. Already when defined
 in *defaultConfig*, it will be arrayed globally for all storages
 created.
+
+
 ## Configuration Properties
 
 ### data base

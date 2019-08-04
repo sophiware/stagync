@@ -50,3 +50,4 @@ defaultConfig({
 In this example, sync ErrorHandler will be executed every time an error occurs when entering a new value in a property.
 
 [Next: Considerations]({{ site.baseurl }}{% link basic-use/basic-use-considerations.md %})
+

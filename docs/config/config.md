@@ -76,5 +76,5 @@ createStorage({
 
 In the following pages, we will understand the properties passed in the creation of this storage.
 
-[Next: Reference]({{ site.baseurl }}{% link config/config-reference.md %})
+[Next: Reference]({{ site.baseurl }}{% link config-reference.md %})
 

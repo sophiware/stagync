@@ -18,25 +18,33 @@ created.
 ### Configuration Properties
 
 #### data base
-*String* *required*
+string
+{: .label }
+required
+{: .label .label-red }
 
 Define your database.
 
 
 #### name
-*String* *required*
+string
+{: .label }
+required
+{: .label .label-red }
 
 Name of the store.
 
 
 #### table
-*depreciated*
+deprecated
+{: .label .label-yellow }
 
 Redundancy of `name`.
 
 
 #### syncErrorHandler
-*Function*
+function
+{: .label }
 
 Receive read errors or read all data.
 By declaring *syncErrorHandler* the handlers of *sync* only

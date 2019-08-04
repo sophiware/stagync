@@ -47,10 +47,12 @@ syncErrorHandler: (err) => {...}
 #### schemas
 
 Set the properties of your storage.
+
 [Learn more about schemas]({{ site.baseurl }}{% link advanced/advanced-schemas.md %})
 
 #### methods
 
 Define custom metering for your storage
+
 [Learn more about methods]({{ site.baseurl }}{% link advanced/advanced-methods.md %})
 

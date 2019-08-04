@@ -22,15 +22,18 @@ created.
 
 Define your database.
 
+
 #### name
 *String* *required*
 
 Name of the store.
 
+
 #### table
 *depreciated*
 
 Redundancy of `name`.
+
 
 #### syncErrorHandler
 *Function*
@@ -42,6 +45,7 @@ The first to receive the property value, `data => ...`.
 ```javascript
 syncErrorHandler: (err) => {...} 
 ```
+
 
 #### schemas
 

@@ -328,6 +328,12 @@ export default class Storage {
     for (let key in props) {
       if (this.schema && this.schema[key] && this.schema[key].validation) {
         try {
+          const response = this.schema[key].validation(props[key])
+
+          if (typeof response === 'boolean' && response === false) {
+            throw new Error('Error validation.')
+          }
+
           await this.schema[key].validation(props[key])
         } catch (err) {
           this.emit(key, err || defaultError)

@@ -81,4 +81,13 @@ storages.websites.props.urls.sync((err, data) => {})
 storages.websites.props.urls.sync((data) => {})
 ```
 
+### props.*.reset()
+
+Restores the prop by setting it to its 
+[default value]({{ site.baseurl }}{% link config/config-schemas.md %}#default).
+
+```javascript
+storages.websites.props.urls.reset()
+```
+
 

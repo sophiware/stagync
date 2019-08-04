@@ -23,5 +23,5 @@ extract storages for better readability of the code.
 const { websites, profiles } = storages
 ```
 
-[Next: Storages features]({{ site.baseurl }}{% link storage/storage-features.md %})
+[Next: Storages features]({{ site.baseurl }}{% link storages/storages-features.md %})
 

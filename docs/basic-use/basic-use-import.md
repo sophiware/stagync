@@ -6,6 +6,7 @@ description: "Install and import"
 parent: Basic use
 ---
 ### Install
+Install using npm. Just run `npm install`.
 ```bash
 npm install --save stagync stagync-storage-memory
 ```

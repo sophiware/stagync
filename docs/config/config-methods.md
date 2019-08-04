@@ -18,8 +18,8 @@ There are some methods that are standard for Stagync, and should be set here.
         init () {
             console.log(`Hello ${this.name}`)
         },
-        myMethod () {
-            console.log('My method called!')
+        myMethod (data) {
+            console.log(`My method ${data}`)
         }   
     }
 }
@@ -31,7 +31,7 @@ To execute a custom method just call straight from your storage after it is moun
 ```javascript
 import { storages } from 'stagync'
 
-storage.websites.methods.myMethod()
+storage.websites.methods.myMethod('Ok!')
 ```
 
 ## Standard Methods

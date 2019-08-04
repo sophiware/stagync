@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Default setting
+title: Default config
 nav_order: 2
-description: "Default setting"
+description: "Default config"
 parent: Basic use
 ---
 

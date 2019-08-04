@@ -102,4 +102,4 @@ value if the [default value]({{ site.baseurl }}{% link config/config-schemas.md 
 storages.websites.props.urls.reset()
 ```
 
-[Next: Disconnectors]({{ site.baseurl }}{% link disconnectors/disconnectors.md %})
+[Next: Disconnectors]({{ site.baseurl }}{% link storages/storages-disconnectors.md %})

@@ -37,3 +37,6 @@ storage.websites.methods.myMethod()
 ## Standard Methods
 ### init
 The init method is always executed when storage starts.
+
+### syncErrorHandler
+Same as config.syncErrorHandler

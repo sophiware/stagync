@@ -59,7 +59,14 @@ export default class Storage {
     this._virtualProps = {}
     this.stillEmitter = config.still || false
     this.propsTypes = {}
-    this.syncErrorHandler = config.syncErrorHandler !== undefined ? config.syncErrorHandler : null
+
+    if(config.methods.syncErrorHandler){
+      this.syncErrorHandler = config.methods.syncErrorHandler
+    } else if(config.syncErrorHandler !== undefined){
+      this.syncErrorHandler = config.syncErrorHandler
+    } else {
+      this.syncErrorHandler = null
+    }
   }
 
   async _prepareSchema () {

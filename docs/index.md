@@ -24,3 +24,5 @@ To address this, Stagync helps to centralize these events,
 offering a simple and feature-rich api for manipulation and retrieval of data.
 
 With it we try to minimize the complexity of the application, improving the development and maintainability of the project.
+
+[Next: Basic use]({{ site.baseurl }}{% link basic-use/basic-use.md %})

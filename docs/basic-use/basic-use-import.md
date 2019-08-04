@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Import
+title: Install and import
 nav_order: 1
-description: "Import"
+description: "Install and import"
 parent: Basic use
 ---
 ### Install

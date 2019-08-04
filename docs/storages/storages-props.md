@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Storages props
+title: Props
 nav_order: 2
-description: "Storages props"
+description: "Props"
 parent: Storages
 ---
 
-## Storage Props
+## Props
 
 Storages props is a feature available as of version 0.5.0. 
 This feature allows the exhutation of methods by specifying the direct prop of the storage object.

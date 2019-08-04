@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Storages features
+title: Features
 nav_order: 1
-description: "Storages features"
+description: "Features"
 parent: Storages
 ---
 
-## Storage Features
+## Features
 
 all storage methods are asynchronous. 
 You can get the response from this method by using * .then * or 

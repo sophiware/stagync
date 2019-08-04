@@ -5,6 +5,10 @@ nav_order: 1
 description: "Import"
 parent: Basic use
 ---
+### Install
+```bash
+npm install --save stagync stagync-storage-memory
+```
 
 ### Import
 ```javascript
@@ -16,7 +20,10 @@ import Memory from 'stagync-storage-memory'
 const { defaultConfig, createStorage }  = require('stagync').default
 const Memory = require('stagync-storage-memory').default
 ```
-Initially we need to import stagync and stagync-storage into our application. Using stagync-storage is essential. It defines the type of storage you will use for your storage. You can find some stagync-storages available on the internet or create them yourself. To learn more about stagync-storage click here.
+Initially we need to import stagync and stagync-storage into our application. 
+Using stagync-storage is essential. It defines the type of storage you will use for your storage. 
+You can find some stagync-storages available on the internet or create them yourself. 
+To learn more about stagync-storage [click here](#).
 
 Let's use this example stagync-storage Memory, which is capable of storing data in memory, either in an app, website or backend.
 

@@ -3,7 +3,6 @@ layout: default
 title: Config
 nav_order: 1
 description: "Config"
-parent: Advanced
 has_children: true
 ---
 
@@ -48,11 +47,11 @@ syncErrorHandler: (err) => {...}
 
 Set the properties of your storage.
 
-[Learn more about schemas]({{ site.baseurl }}{% link advanced/advanced-schemas.md %})
+[Learn more about schemas]({{ site.baseurl }}{% link config/config-schemas.md %})
 
 #### methods
 
 Define custom metering for your storage
 
-[Learn more about methods]({{ site.baseurl }}{% link advanced/advanced-methods.md %})
+[Learn more about methods]({{ site.baseurl }}{% link config/config-methods.md %})
 

@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Storages disconnectors
+title: Disconnectors
 nav_order: 3
-description: "Storages disconnectors"
+description: "Disconnectors"
 parent: Storages
 ---
 

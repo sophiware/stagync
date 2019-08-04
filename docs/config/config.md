@@ -6,7 +6,7 @@ description: "Config"
 has_children: true
 ---
 
-### Config
+## Config
 
 You can set your storage settings in two ways.
 
@@ -15,9 +15,9 @@ The difference is that when the setting is set in *createStorage*,
 it will only fit the scope of that storage. Already when defined
 in *defaultConfig*, it will be arrayed globally for all storages
 created.
-### Configuration Properties
+## Configuration Properties
 
-#### data base
+### data base
 string
 {: .label }
 required
@@ -26,7 +26,7 @@ required
 Define your database.
 
 
-#### name
+### name
 string
 {: .label }
 required
@@ -35,14 +35,14 @@ required
 Name of the store.
 
 
-#### table
+### table
 deprecated
 {: .label .label-yellow }
 
 Redundancy of `name`.
 
 
-#### syncErrorHandler
+### syncErrorHandler
 function
 {: .label }
 
@@ -54,14 +54,13 @@ The first to receive the property value, `data => ...`.
 syncErrorHandler: (err) => {...} 
 ```
 
-
-#### schemas
+### schemas
 
 Set the properties of your storage.
 
 [Learn more about schemas]({{ site.baseurl }}{% link config/config-schemas.md %})
 
-#### methods
+### methods
 
 Define custom metering for your storage
 

@@ -36,7 +36,9 @@ All you have to do is pass a callback and wait for the event.
 Calling back a sync returns two parameters, error and data. 
 But you can also create callbacks without waiting for errors to be returned, returning only data.
 
-For this you need to set `syncErrorHandler`. You can set in *defaultConfig* or by passing as [*methods* in storage]{{ site.baseurl }}{% link config/config-methods.md %}.
+For this you need to set `syncErrorHandler`. 
+You can set in *defaultConfig* or by passing as 
+[methods in storage]({{ site.baseurl }}{% link config/config-methods.md %}).
 ```javascript
 defaultConfig({
   database: 'myDataBase',

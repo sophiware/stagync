@@ -81,6 +81,18 @@ storages.websites.props.urls.sync((err, data) => {})
 storages.websites.props.urls.sync((data) => {})
 ```
 
+### props.*.discontinue()
+
+Remove all prop syncs within scope.
+
+```javascript
+storages.websites.props.urls.sync(data => console.log(data))
+
+storages.websites.props.urls.discontinue()
+// sync is removed
+```
+
+
 ### props.*.reset()
 
 Restores the prop defining to its default 
@@ -89,6 +101,5 @@ value if the [default value]({{ site.baseurl }}{% link config/config-schemas.md 
 ```javascript
 storages.websites.props.urls.reset()
 ```
-
 
 [Next: Disconnectors]({{ site.baseurl }}{% link disconnectors/disconnectors.md %})

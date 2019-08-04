@@ -65,6 +65,10 @@ class CreateProp {
       [this.propName]: handler
     })
   }
+
+  discontinue(){
+    return this.that.discontinue(this.propName)
+  }
 }
 
 export default class StorageProps extends Storage {

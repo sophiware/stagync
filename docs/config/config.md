@@ -20,10 +20,12 @@ Below you will see a complex example of a storage configuration.
 
 ## Example
 ```javascript
+import { defaultConfig, createStorage } from 'stagync/src'
+import Memory from 'stagync-storage-memory'
+
 defaultConfig({
   database: 'myDb',
-  storage: LocalForage,
-  drive: 'localstorage',
+  storage: Memory,
   syncErrorHandler (err) {
     console.log(err)
   }   

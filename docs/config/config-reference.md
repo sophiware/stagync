@@ -17,6 +17,17 @@ required
 Define your database.
 
 
+### storage
+function
+{: .label }
+class
+{: .label }
+required
+{: .label .label-red }
+
+The type of storage you use. Here you must define with the stagync-storage class or function imported in the project.
+
+
 ### name
 string
 {: .label }

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Sync props
-nav_order: 5
+nav_order: 6
 description: "Sync props"
 parent: Basic use
 ---

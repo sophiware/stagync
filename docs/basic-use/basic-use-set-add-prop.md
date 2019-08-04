@@ -17,8 +17,8 @@ parent: Basic use
 ```
 
 Now let's modify and insert new items to the `urls` property.
-Using `set` will override the value, while user` add` will enter new values into the array.
-`Add` can only be run from` props`.
+Using `set` will override the value, while user `add` will enter new values into the array.
+`Add` can only be run from `props`.
 
 At this point the value of the `urls` property should be this:
 ```javascript

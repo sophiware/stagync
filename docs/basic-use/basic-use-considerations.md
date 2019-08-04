@@ -7,3 +7,4 @@ parent: Basic use
 ---
 
 ### Considerations
+[Next: Config]({{ site.baseurl }}{% link config/config.md %})

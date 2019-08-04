@@ -9,7 +9,7 @@ has_children: true
 ## Config
 
 ```javascript
-import { defaultConfig, createStorage } from 'stagync/src'
+import { defaultConfig, createStorage } from 'stagync'
 import LocalForage from 'stagync-storage-localforage'
 
 defaultConfig({

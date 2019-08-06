@@ -13,24 +13,28 @@ let eventsNamesStorage = {
 
 export default class Storage {
   constructor (config) {
-    this._setup(config)
+    if (config) {
+      this._setup(config)
+    }
   }
 
-  _setup (config) {
+  async _setup (config) {
     this._prepareVars(config)
     this._importStorage()
     this._defineProps()
     this._prepareMethods()
     this._prepareVirtualProps()
-    this._prepareSchema().then(() => {
-      if (this.init) {
-        this.init()
-      }
-    })
+    await this._prepareSchema()
+
+    if (this.init) {
+      this.init()
+    }
   }
 
-  createInstance () {
-    return new Storage(this.config)
+  async createInstance () {
+    const storage = new Storage()
+    await storage._setup(this.config)
+    return storage
   }
 
   scope () {

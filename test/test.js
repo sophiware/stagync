@@ -179,26 +179,24 @@ describe('Storage', () => {
     setTimeout(done, 1)
   })
 
-  it('Scope', function (done) {
-    console.log('createScope success')
-    const scopeSuccess = storages.websites.scope()
-    console.log('createScope fail')
-    const scopeFail = storages.websites.scope()
-    console.log(scopeSuccess.schema, scopeFail.schema)
-    scopeSuccess.sync({
-      name: done
-    }, false)
+  it('Scope', () => new Promise(async (resolve, reject) => {
+    const scopeSuccess = await storages.websites.scope()
+    const scopeFail = await storages.websites.scope()
 
+    scopeSuccess.sync({
+      name: resolve
+    }, false)
 
     scopeFail.sync({
-      name: () => done(new Error('Scope error'))
+      name: reject
     }, false)
 
-    // scopeFail.discontinueAll()
+    scopeFail.discontinueAll()
 
     scopeFail.set({
       name: 'asdasd'
     })
-    console.log('okokok')
-  })
+
+    console.log('ok')
+  }))
 })

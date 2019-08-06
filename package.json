@@ -1,7 +1,7 @@
 {
   "name": "stagync",
   "version": "1.0.0",
-  "description": "Persistes modeled data and synchronizes",
+  "description": "Centralize and control and persist states through events.",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
@@ -10,19 +10,22 @@
   "author": "Philippe Assis <assis@sophiware.com>",
   "license": "ISC",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "clone": "^2.1.1",
     "deepmerge": "^2.0.0",
+    "events": "^3.0.0",
     "prop-types": "^15.6.0",
-    "stagync-storage-memory": "^0.0.1",
+    "stagync-storage-memory": "^0.1.5",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.1",
-    "babel-plugin-es6-promise": "^1.1.1",
-    "babel-plugin-promise": "^1.0.3",
-    "babel-preset-env": "^1.6.1",
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-transform-arrow-functions": "^7.2.0",
+    "@babel/preset-env": "^7.5.5",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
     "eslint": "^4.11.0",
     "eslint-config-mocha": "0.0.0",
     "eslint-config-standard": "^10.2.1",

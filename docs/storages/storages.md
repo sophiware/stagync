@@ -8,20 +8,20 @@ has_children: true
 
 ## Storages 
 
-After [storages are created]({{ site.baseurl }}{% link basic-use/basic-use-create-storage.md %}), 
+After [createStorage are created]({{ site.baseurl }}{% link basic-use/basic-use-create-storage.md %}), 
 you can import them anywhere in the project to use them. 
-To import storages, use the storages feature, importing straight from Stagync.
+To import createStorage, use the createStorage feature, importing straight from Stagync.
 
 ```javascript
-import { storages } from 'stagync'
+import { createStorage } from 'stagync'
 ```
 
-The "storages" feature loads all storages created with createStorages. We suggest that you always 
-extract storages for better readability of the code.
+The "createStorage" feature loads all createStorage created with createStorages. We suggest that you always 
+extract createStorage for better readability of the code.
 
 ```javascript
-const { websites, profiles } = storages
+const { websites, profiles } = createStorage
 ```
 
-[Next: Storages features]({{ site.baseurl }}{% link storages/storages-features.md %})
+[Next: Storages features]({{ site.baseurl }}{% link createStorage/createStorage-features.md %})
 

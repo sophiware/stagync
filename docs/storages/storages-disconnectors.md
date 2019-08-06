@@ -32,7 +32,7 @@ string
 Removes sync from a property within sync scope.
 
 ```javascript
-storages.websites.discontinue('urls')
+createStorage.websites.discontinue('urls')
 ```
 
 ### discontinueAll()
@@ -40,7 +40,7 @@ storages.websites.discontinue('urls')
 Removes sync from all properties within sync scope.
 
 ```javascript
-storages.websites.discontinueAll()
+createStorage.websites.discontinueAll()
 ```
 
 ### discontinueGlobalAll()
@@ -48,7 +48,7 @@ storages.websites.discontinueAll()
 Removes sync from all properties of a score in all scopes.
 
 ```javascript
-storages.websites.discontinueGlobalAll()
+createStorage.websites.discontinueGlobalAll()
 ```
 
 ### destroy()
@@ -56,7 +56,7 @@ storages.websites.discontinueGlobalAll()
 Remova uma sincronização de todas as propriedades de um armazenamento em todos os itens e remova todos os itens.
 
 ```javascript
-storages.websites.discontinueGlobalAll()
+createStorage.websites.discontinueGlobalAll()
 ```
 
 ### clear()
@@ -64,5 +64,5 @@ storages.websites.discontinueGlobalAll()
 Remove all items from storage.
 
 ```javascript
-storages.websites.clear()
+createStorage.websites.clear()
 ```

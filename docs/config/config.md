@@ -13,7 +13,7 @@ You can set your storage settings in two ways.
 The first is directly in `createStorage` the second is `defaultConfig`.
 The difference is that when the setting is set in *createStorage*,
 it will only fit the scope of that storage. Already when defined
-in *defaultConfig*, it will be arrayed globally for all storages
+in *defaultConfig*, it will be arrayed globally for all createStorage
 created.
 
 Below you will see a complex example of a storage configuration.

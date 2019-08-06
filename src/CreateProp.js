@@ -1,6 +1,6 @@
 import Storage from './Storage'
 
-class CreateProp {
+export default class CreateProp {
   constructor (that, propName) {
     this.that = that
     this.propName = propName
@@ -66,26 +66,12 @@ class CreateProp {
     })
   }
 
-  discontinue(){
+  discontinue () {
     return this.that.discontinue(this.propName)
   }
 
-  still(){
+  still () {
     return this.that.still()
   }
 }
 
-export default class StorageProps extends Storage {
-  constructor (props) {
-    super(props)
-    this.defineProps()
-  }
-
-  async defineProps () {
-    this.props = {}
-
-    for (let key in this.schema) {
-      this.props[key] = new CreateProp(this, key)
-    }
-  }
-}

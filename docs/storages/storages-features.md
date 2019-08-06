@@ -23,8 +23,8 @@ string
 Recover data from storage.
 
 ```javascript
-const all = await storages.websites.get()
-const urls = await storages.websites.get('urls')
+const all = await createStorage.websites.get()
+const urls = await createStorage.websites.get('urls')
 ```
 
 ### set(props)
@@ -34,7 +34,7 @@ object
 Defines one or more properties of a storage.
 
 ```javascript
-storages.website.set({
+createStorage.website.set({
     urls: ['github.com']
 })
 ```
@@ -48,7 +48,7 @@ object
 Receive functions that will be performed when a prop is modified.
 
 ```javascript
-storages.websites.sync({
+createStorage.websites.sync({
     urls(err, data){ ... }
 })
 ```
@@ -60,7 +60,7 @@ function
 Receives functions that will be executed when any prop is modified.
 
 ```javascript
-storages.websites.syncAll((err, data) => {...})
+createStorage.websites.syncAll((err, data) => {...})
 ```
 
 ### syncMany(propsNamesArray, functions)
@@ -72,7 +72,7 @@ function
 Receives functions that will be executed when the defined props are modified.
 
 ```javascript
-storages.websites.syncMany(['urls', 'names'], (err, data) => {...})
+createStorage.websites.syncMany(['urls', 'names'], (err, data) => {...})
 ```
 
 ## Utils
@@ -82,7 +82,7 @@ storages.websites.syncMany(['urls', 'names'], (err, data) => {...})
 Clears the entire table.
 
 ```javascript
-storages.websites.clear()
+createStorage.websites.clear()
 ```
 
 ### restoreDefaultValues()
@@ -90,7 +90,7 @@ storages.websites.clear()
 Restores the data to the default values registered in the schema.
 
 ```javascript
-storages.websites.restoreDefaultValues()
+createStorage.websites.restoreDefaultValues()
 ```
 
 ### restoreDefaultValues()
@@ -98,7 +98,7 @@ storages.websites.restoreDefaultValues()
 Restores the data to the default values registered in the schema.
 
 ```javascript
-storages.websites.restoreDefaultValues()
+createStorage.websites.restoreDefaultValues()
 ```
 
 ### still()
@@ -107,7 +107,7 @@ Silences the emission of modification events for the context in which it was app
 This is a chained method, returning to the instantiated and muted object.
 
 ```javascript
-storages.websites.still().set({urls: ['http://google.com']})
+createStorage.websites.still().set({urls: ['http://google.com']})
 ```
 
-[Next: Storages props]({{ site.baseurl }}{% link storages/storages-props.md %})
+[Next: Storages props]({{ site.baseurl }}{% link createStorage/createStorage-props.md %})

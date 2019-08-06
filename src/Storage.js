@@ -3,6 +3,7 @@ import EventEmitter from 'events'
 import deepmerge from 'deepmerge'
 import clone from 'clone'
 import uuid from 'uuid/v4'
+import CreateProp from './CreateProp'
 
 const eventEmitter = new EventEmitter()
 let eventsNamesStorage = {
@@ -10,14 +11,15 @@ let eventsNamesStorage = {
   global: []
 }
 
-if (window) {
-  window.eventsNamesStorage = eventsNamesStorage
-}
-
 export default class Storage {
   constructor (config) {
+    this._setup(config)
+  }
+
+  _setup (config) {
     this._prepareVars(config)
     this._importStorage()
+    this._defineProps()
     this._prepareMethods()
     this._prepareVirtualProps()
     this._prepareSchema().then(() => {
@@ -29,6 +31,10 @@ export default class Storage {
 
   createInstance () {
     return new Storage(this.config)
+  }
+
+  scope () {
+    return this.createInstance()
   }
 
   _importStorage () {
@@ -46,6 +52,7 @@ export default class Storage {
 
   _prepareVars (config) {
     this.config = config
+    this.props = {}
     this.name = config.name
     this.database = config.database
     this.table = config.table
@@ -60,9 +67,9 @@ export default class Storage {
     this.stillEmitter = config.still || false
     this.propsTypes = {}
 
-    if(config.methods.syncErrorHandler){
+    if (config.methods.syncErrorHandler) {
       this.syncErrorHandler = config.methods.syncErrorHandler
-    } else if(config.syncErrorHandler !== undefined){
+    } else if (config.syncErrorHandler !== undefined) {
       this.syncErrorHandler = config.syncErrorHandler
     } else {
       this.syncErrorHandler = null
@@ -255,7 +262,7 @@ export default class Storage {
    * syncMany
    * @description sincroniza um array de objetos retonando em um callback único
    */
-  syncMany (objs, callback) {
+  syncMany (objs, callback, getStart = true) {
     let props = {}
 
     objs.map(key => {
@@ -268,7 +275,7 @@ export default class Storage {
       }
     })
 
-    this.sync(props)
+    this.sync(props, getStart)
   }
 
   /**
@@ -352,52 +359,6 @@ export default class Storage {
     }
 
     return result
-  }
-
-  /**
-   * merge
-   * @description Mescla novos dados com os dados já salvos
-   */
-  async merge (props, force = false) {
-    if (this.virtualProps) {
-      for (let key in props) {
-        if (this.virtualProps[key]) {
-          throw new Error(`You can not modify a virtual property: ${key}`)
-        }
-      }
-    }
-
-    // Força a execução sem a validação
-    if (!force) {
-      if (this._findInSchema(props) && this.propsTypes && this.checkPropTypes(props)) {
-        props = await this.validation(props)
-      }
-    }
-
-    if (!props) {
-      return true
-    }
-
-    // Formata os valores caso a formação esteja configura no schema
-    props = await this.format(props)
-
-    const that = this
-
-    try {
-      return await new Promise((resolve, reject) => {
-        this.storage.mergeItem(that.key, props, (err) => {
-          if (err) {
-            that.emit(props, err)
-            return reject(err)
-          }
-
-          that.emit(props)
-          resolve(true)
-        })
-      })
-    } catch (err) {
-      throw err.message
-    }
   }
 
   _functionName (fun) {
@@ -622,7 +583,7 @@ export default class Storage {
     const index = eventsNamesStorage.local[this.uuid].indexOf(eventName)
 
     if (index > -1) {
-      eventEmitter.removeListener(eventName, () => {})
+      eventEmitter.removeAllListeners(eventName)
       this.removeByEventNameStorage(eventName)
     }
 
@@ -668,14 +629,13 @@ export default class Storage {
   discontinueAll () {
     let removed = []
 
-    if (eventsNamesStorage.local[this.uuid].length > 0) {
-      eventsNamesStorage.local[this.uuid].map(eventName => {
-        eventEmitter.removeListener(eventName, () => {
-          removed.push(eventName)
-          this.removeByEventNameStorage(eventName)
-        })
-      })
-    }
+    const local = [...eventsNamesStorage.local[this.uuid]]
+
+    local.map(eventName => {
+      eventEmitter.removeAllListeners(eventName)
+      removed.push(eventName)
+      this.removeByEventNameStorage(eventName)
+    })
 
     return removed
   }
@@ -684,11 +644,10 @@ export default class Storage {
     let removed = []
 
     if (eventsNamesStorage.global.length > 0) {
-      eventsNamesStorage.gloabl.map(eventName => {
-        eventEmitter.removeListener(eventName, () => {
-          removed.push(eventName)
-          this.removeByEventNameStorage(eventName)
-        })
+      eventsNamesStorage.global.map(eventName => {
+        eventEmitter.removeAllListeners(eventName)
+        removed.push(eventName)
+        this.removeByEventNameStorage(eventName, true)
       })
     }
 
@@ -698,5 +657,11 @@ export default class Storage {
   destroy () {
     this.discontinueAll()
     return this.clear()
+  }
+
+  _defineProps () {
+    for (let key in this.config.schema) {
+      this.props[key] = new CreateProp(this, key)
+    }
   }
 }

@@ -8,9 +8,9 @@ parent: Basic use
 
 ### Get Prop
 ```javascript
-import { storages } from 'stagync'
+import { createStorage } from 'stagync'
 
-const { websites } = storages
+const { websites } = createStorage
 
 async function getProps(){
   const urlsAlt = await websites.get('urls')
@@ -24,7 +24,7 @@ getProps()
 ```
 ##### Line by Line
 - *Line 1*: In the first line of this example, we import all available arrays. This is possible thanks to the `createStorage` function presented in the previous step.
-- *Line 3*: Next we look at `websites` of the `storages` object, this brings more clarity to the code. But we could simply use `storages.websites`.
+- *Line 3*: Next we look at `websites` of the `createStorage` object, this brings more clarity to the code. But we could simply use `createStorage.websites`.
 - *Line 5*: Most features available in a storage are excreted asynchronously. For better readability we use a function declaring `async` as the scope of our application.
 - *Line 6*: Finally we retrieve the value of the `urls` property, as we haven't modified it yet we will retrieve the default value.
 - *Line 9*: Another way to retrieve the `urls` property is by using `props` resources, it abstracts and adds new features to your property, such as `add` and `remove` that can be used to enter new values in properties of type *array* and *object*.

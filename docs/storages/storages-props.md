@@ -14,7 +14,7 @@ This feature allows the exhutation of methods by specifying the direct prop of t
 You can also export props before you run them.
 
 ```javascript
-const { urls } = storages.props
+const { urls } = createStorage.props
 
 urls.add('http://google.com')
 const sites = await urls.get()  // [http://github.com, http://google.com]
@@ -26,7 +26,7 @@ urls.remove('http://github.com')  // [http://google.com]
 Returns the current value of prop.
 
 ```javascript
-const urls = await storages.websites.props.urls.get()
+const urls = await createStorage.websites.props.urls.get()
 ```
 
 ### props.*.set(value)
@@ -36,7 +36,7 @@ any
 Defines the value of a prop.
 
 ```javascript
-storages.websites.props.urls.set(['http://github.com'])
+createStorage.websites.props.urls.set(['http://github.com'])
 ```
 
 ### props.*.add(value)
@@ -46,7 +46,7 @@ any
 Inserts a value into a prop, only for `array` type `object`.
 
 ```javascript
-storages.websites.props.urls.add('http://gogle.com')
+createStorage.websites.props.urls.add('http://gogle.com')
 ```
 
 ### props.*.remove(value)
@@ -60,11 +60,11 @@ expect an index (type int), if object, expect the property name (type string).
 
 ```javascript
 // ulrs = ['my', 'name', 'is']
-storages.websites.props.urls.remove(1)
+createStorage.websites.props.urls.remove(1)
 // ['my', 'is']
 
 // profiles = { name: 'Philippe', year: 1989}
-storages.websites.props.profiles.remove('name')
+createStorage.websites.props.profiles.remove('name')
 // {year: 1989}
 ```
 
@@ -75,10 +75,10 @@ function
 Inserts a value into a prop, only for `array` type `object`.
 
 ```javascript
-storages.websites.props.urls.sync((err, data) => {})
+createStorage.websites.props.urls.sync((err, data) => {})
 
 // With syncErrorHandler defined.
-storages.websites.props.urls.sync((data) => {})
+createStorage.websites.props.urls.sync((data) => {})
 ```
 
 ### props.*.discontinue()
@@ -86,9 +86,9 @@ storages.websites.props.urls.sync((data) => {})
 Remove all prop syncs within scope.
 
 ```javascript
-storages.websites.props.urls.sync(data => console.log(data))
+createStorage.websites.props.urls.sync(data => console.log(data))
 
-storages.websites.props.urls.discontinue()
+createStorage.websites.props.urls.discontinue()
 // sync is removed
 ```
 
@@ -99,7 +99,7 @@ Restores the prop defining to its default
 value if the [default value]({{ site.baseurl }}{% link config/config-schemas.md %}#default) is set from schema.
 
 ```javascript
-storages.websites.props.urls.reset()
+createStorage.websites.props.urls.reset()
 ```
 
-[Next: Disconnectors]({{ site.baseurl }}{% link storages/storages-disconnectors.md %})
+[Next: Disconnectors]({{ site.baseurl }}{% link createStorage/createStorage-disconnectors.md %})

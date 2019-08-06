@@ -7,7 +7,7 @@ parent: Config
 ---
 
 ## Schemas
-We have two models of props for storages, the `common props`, and the `virtual props`.
+We have two models of props for createStorage, the `common props`, and the `virtual props`.
 In *common props* you can set the default type and value. These props can be modified.
 *Virtual props* perform a function every time they are called and trigger change events when a listener 
 is declared in it through the `listener` property

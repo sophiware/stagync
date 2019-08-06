@@ -1,4 +1,4 @@
-import StorageProps from './StorageProps'
+import Storage from './Storage'
 import deepmerge from 'deepmerge'
 
 const stagyncUtilsLocalCache = {
@@ -16,7 +16,7 @@ export default {
   defaultConfig (config) {
     delete config.schema
     delete config.methods
-    
+
     stagyncUtilsLocalCache.defaultConfig = config
   },
   getCache (prop) {
@@ -31,7 +31,7 @@ export default {
       configStorage[key].name = key
 
       const storageConfig = deepmerge(stagyncUtilsLocalCache.defaultConfig, configStorage[key])
-      stagyncUtilsLocalCache.storages[key] = new StorageProps(storageConfig)
+      stagyncUtilsLocalCache.storages[key] = new Storage(storageConfig)
     }
   },
   storages

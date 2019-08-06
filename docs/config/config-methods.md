@@ -33,7 +33,7 @@ Context is not its own storage method.
 To execute a custom method just call straight from your storage after it is mounted.
 
 ```javascript
-import { storages } from 'stagync'
+import { createStorage } from 'stagync'
 
 storage.websites.methods.sendMail("This is your email.")
 ```
@@ -45,5 +45,5 @@ The init method is always executed when storage starts.
 ### syncErrorHandler
 Same as config.syncErrorHandler
 
-[Next: Storages]({{ site.baseurl }}{% link storages/storages.md %})
+[Next: Storages]({{ site.baseurl }}{% link createStorage/createStorage.md %})
 

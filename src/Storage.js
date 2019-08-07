@@ -29,7 +29,7 @@ export default class Storage {
 
   _setup (config) {
     this._prepareVars(config)
-    this._importStorage()
+    this._importDriver()
     this._defineProps()
     this._prepareMethods()
     this._prepareVirtualProps()
@@ -51,14 +51,14 @@ export default class Storage {
     return this.createInstance()
   }
 
-  _importStorage () {
-    if (!this.config.storage) {
+  _importDriver () {
+    if (!this.config.driver) {
       throw new Error('You need to define a storage for this model. Learn how at https://github.com/sophiware/stagync#storage')
     }
 
     try {
-      const ConfigStorage = this.config.storage
-      this.storage = new ConfigStorage(this)
+      const Driver = this.config.driver
+      this.driver = new Driver(this)
     } catch (err) {
       throw new Error('An error occurred while trying to load storage', err)
     }
@@ -80,6 +80,7 @@ export default class Storage {
     this.virtualProps = {}
     this._virtualProps = {}
     this.stillEmitter = config.still || false
+    this.stillEmitterJustNow = false
     this.propsTypes = {}
     this._localEventReadName = `local:${this.uuid}:isRead`
 
@@ -296,13 +297,26 @@ export default class Storage {
     this.sync(props, getStart)
   }
 
+  isStill () {
+    if (this.stillEmitter) {
+      return true
+    }
+
+    if (this.stillEmitterJustNow) {
+      this.stillEmitterJustNow = false
+      return true
+    }
+
+    return false
+  }
+
   /**
    * emit
    * @description Quando sucesso: os emit's são passados em conjunto como objeto
    * @description Quando erro: os emit's são passados individualmente com o erro
    **/
   emit (props, err) {
-    if (this.stillEmitter) {
+    if (this.isStill()) {
       return null
     }
 
@@ -488,7 +502,7 @@ export default class Storage {
 
     try {
       return await new Promise((resolve, reject) => {
-        this.storage.setItem(that.key, props, (err) => {
+        this.driver.setItem(that.key, props, (err) => {
           props = that._resolve(props)
 
           if (err) {
@@ -510,9 +524,8 @@ export default class Storage {
    * @description Força a não emissão do evento ao modificar uma propriedade
    */
   still () {
-    const that = this
-    that.stillEmitter = true
-    return that
+    this.stillEmitterJustNow = true
+    return this
   }
 
   /**
@@ -521,7 +534,7 @@ export default class Storage {
    */
   async clear () {
     await this._isReady()
-    const exec = await this.storage.removeItem(this.key)
+    const exec = await this.driver.removeItem(this.key)
     return exec
   }
 
@@ -542,7 +555,7 @@ export default class Storage {
     const that = this
 
     return new Promise((resolve, reject) => {
-      that.storage.getItem(that.key, (err, value) => {
+      this.driver.getItem(that.key, (err, value) => {
         if (err) {
           return reject(err)
         }

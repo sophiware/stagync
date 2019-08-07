@@ -238,4 +238,28 @@ describe('Storage', () => {
 
     setTimeout(resolve, 10)
   }))
+
+  it('Still', () => new Promise(async (resolve, reject) => {
+    storages.websites.syncAll((err, data) => {
+      if (err) {
+        return reject(err)
+      }
+
+      if (data.name === 'listener') {
+        return resolve()
+      }
+
+      reject(new Error('Not Work'))
+    })
+
+    await storages.websites.still().set({
+      name: 'still!'
+    })
+
+    await storages.websites.set({
+      name: 'listener'
+    })
+
+    setTimeout(() => reject('Not work'), 0)
+  }))
 })

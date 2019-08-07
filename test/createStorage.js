@@ -1,9 +1,9 @@
 const { defaultConfig, createStorage } = require('../lib')
-const Memory = require('../storages/stagync-storage-memory').default
+const Memory = require('@stagync-driver/memory').default
 
 defaultConfig({
   database: 'myDataBase',
-  storage: Memory
+  driver: Memory
 })
 
 createStorage({
@@ -16,7 +16,7 @@ createStorage({
           'http://github.com'
         ]
       },
-      userProfile: {
+      profiles: {
         type: 'object'
       },
       name: {

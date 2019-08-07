@@ -18,22 +18,18 @@ export default class CreateProp {
     return this.that.get(this.propName)
   }
 
-  async add (newValue, objectValue) {
+  async add (newValue, started = true) {
     let currentValue = await this.that.get(this.propName)
 
     if (this.that.propsTypes[this.propName] === 'array') {
       currentValue.push(newValue)
     } else if (this.that.propsTypes[this.propName] === 'object') {
-      if (objectValue) {
-        currentValue[newValue] = objectValue
-      } else {
-        currentValue = {...currentValue, ...newValue}
-      }
+      currentValue = {...currentValue, ...newValue}
     }
 
     const response = await this.that.set({
       [this.propName]: currentValue
-    })
+    }, started)
 
     return response
   }
@@ -58,18 +54,13 @@ export default class CreateProp {
     return this.that.set({[this.propName]: newValue})
   }
 
-  sync (handler) {
+  sync (handler, started = true) {
     return this.that.sync({
       [this.propName]: handler
-    })
+    }, started)
   }
 
   discontinue () {
     return this.that.discontinue(this.propName)
   }
-
-  still () {
-    return this.that.still()
-  }
 }
-

@@ -9,8 +9,7 @@ describe('Storage', () => {
   })
 
   it('Get default value', async function () {
-    const urls = storages.websites.get('urls')
-
+    let urls = await storages.websites.get('urls')
     if (urls.length === 0) {
       throw new Error('Not urls')
     }
@@ -180,8 +179,8 @@ describe('Storage', () => {
   })
 
   it('Scope', () => new Promise(async (resolve, reject) => {
-    const scopeSuccess = await storages.websites.scope()
-    const scopeFail = await storages.websites.scope()
+    const scopeSuccess = storages.websites.scope()
+    const scopeFail = storages.websites.scope()
 
     scopeSuccess.sync({
       name: resolve
@@ -194,9 +193,49 @@ describe('Storage', () => {
     scopeFail.discontinueAll()
 
     scopeFail.set({
-      name: 'asdasd'
+      name: 'testname'
+    })
+  }))
+
+  it('Discontinue Global Scopes', () => new Promise(async (resolve, reject) => {
+    const scopeSuccess = storages.websites.scope()
+    const scopeFail = storages.websites.scope()
+
+    scopeSuccess.sync({
+      name: reject
+    }, false)
+
+    scopeFail.sync({
+      name: reject
+    }, false)
+
+    storages.websites.discontinueGlobalAll()
+
+    scopeFail.set({
+      name: 'testname'
     })
 
-    console.log('ok')
+    setTimeout(resolve, 10)
+  }))
+
+  it('Scopes Friendly', () => new Promise(async (resolve, reject) => {
+    const scopeSuccess = storages.scope.success.websites
+    const scopeFail = storages.scope.fail.websites
+
+    scopeSuccess.sync({
+      name: reject
+    }, false)
+
+    scopeFail.sync({
+      name: reject
+    }, false)
+
+    storages.websites.discontinueGlobalAll()
+
+    await scopeFail.set({
+      name: 'testname'
+    })
+
+    setTimeout(resolve, 10)
   }))
 })

@@ -1,5 +1,5 @@
 const { defaultConfig, createStorage } = require('../lib')
-const Memory = require('stagync-storage-memory').default
+const Memory = require('../storages/stagync-storage-memory').default
 
 defaultConfig({
   database: 'myDataBase',
@@ -29,7 +29,7 @@ createStorage({
     },
     methods: {
       async init () {
-        await this.methods.addAge.call(this, 1)
+        console.log('init')
       },
       async addAge (value) {
         const {age} = this.props

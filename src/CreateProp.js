@@ -1,5 +1,3 @@
-import Storage from './Storage'
-
 export default class CreateProp {
   constructor (that, propName) {
     this.that = that

@@ -13,28 +13,38 @@ let eventsNamesStorage = {
 
 export default class Storage {
   constructor (config) {
-    if (config) {
-      this._setup(config)
-    }
+    this._rawConfig = config
+    this._setup(config)
   }
 
-  async _setup (config) {
+  _isReady () {
+    if (!this.__ready) {
+      return new Promise(resolve => {
+        eventEmitter.on(this._localEventReadName, () => resolve())
+      })
+    }
+
+    return Promise.resolve()
+  }
+
+  _setup (config) {
     this._prepareVars(config)
     this._importStorage()
     this._defineProps()
     this._prepareMethods()
     this._prepareVirtualProps()
-    await this._prepareSchema()
 
-    if (this.init) {
-      this.init()
-    }
+    this._prepareSchema()
+
+    this._isReady().then(() => {
+      if (this.init) {
+        this.init()
+      }
+    })
   }
 
-  async createInstance () {
-    const storage = new Storage()
-    await storage._setup(this.config)
-    return storage
+  createInstance () {
+    return new Storage(this._rawConfig)
   }
 
   scope () {
@@ -56,6 +66,7 @@ export default class Storage {
 
   _prepareVars (config) {
     this.config = config
+    this.__ready = false
     this.props = {}
     this.name = config.name
     this.database = config.database
@@ -70,6 +81,7 @@ export default class Storage {
     this._virtualProps = {}
     this.stillEmitter = config.still || false
     this.propsTypes = {}
+    this._localEventReadName = `local:${this.uuid}:isRead`
 
     if (config.methods.syncErrorHandler) {
       this.syncErrorHandler = config.methods.syncErrorHandler
@@ -96,12 +108,14 @@ export default class Storage {
         await this.setIfEmpty(key, prop.default)
       }
     }
+
+    this.__ready = true
+    eventEmitter.emit(this._localEventReadName)
   }
 
-  // TODO: Criar for para props de setIfEmpty
   async setIfEmpty (key, prop) {
     try {
-      const data = await this.get(key)
+      const data = await this._get(key)
 
       if (data !== null) {
         return null
@@ -110,11 +124,9 @@ export default class Storage {
       return err
     }
 
-    const value = await this.set({
+    await this._set({
       [key]: prop
     })
-
-    return value
   }
 
   /**
@@ -240,7 +252,9 @@ export default class Storage {
     }
 
     if (getStart) {
-      this.getStorageProps().then(data => {
+      this.getStorageProps().then(async (data) => {
+        await this._isReady()
+
         for (let key in data) {
           if (key in props) {
             if (!this.syncErrorHandler) {
@@ -433,11 +447,19 @@ export default class Storage {
     return obj
   }
 
+  set (props, force = false) {
+    return this._set(props, force, true)
+  }
+
   /**
    * set
    * @description Modifica uma propriedade
    */
-  async set (props, force = false) {
+  async _set (props, force = false, awaitReady = false) {
+    if (awaitReady) {
+      await this._isReady()
+    }
+
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
@@ -498,6 +520,7 @@ export default class Storage {
    * @description Limpa toda tabela
    */
   async clear () {
+    await this._isReady()
     const exec = await this.storage.removeItem(this.key)
     return exec
   }
@@ -507,7 +530,8 @@ export default class Storage {
    * @description Remove uma propriedade
    */
   async remove (prop) {
-    const exec = await this.set({
+    await this._isReady()
+    const exec = await this._set({
       [prop]: null
     }, true)
 
@@ -544,16 +568,20 @@ export default class Storage {
     return result
   }
 
-  getItem (item) {
-    return this.get(item)
-  }
-
   /**
    * get
    * @description Pega as propriedadades
    */
-  async get (item) {
+  get (item) {
+    return this._get(item, true)
+  }
+
+  async _get (item, awaitReady = false) {
     try {
+      if (awaitReady) {
+        await this._isReady()
+      }
+
       if (item) {
         if (item in this.virtualProps) {
           const data = await this.getVirtualProps(item)
@@ -595,6 +623,8 @@ export default class Storage {
   }
 
   async restoreDefaultValues () {
+    await this._isReady()
+
     const keys = Object.keys(this.schema)
 
     for (let i = 0; i < keys.length; i++) {
@@ -602,11 +632,11 @@ export default class Storage {
       let prop = this.schema[key]
 
       if ('default' in prop) {
-        await this.set({
+        await this._set({
           [key]: prop.default
         }, true)
       } else if (!('get' in prop)) {
-        await this.set({
+        await this._set({
           [key]: null
         }, true)
       }
@@ -647,13 +677,13 @@ export default class Storage {
   discontinueGlobalAll () {
     let removed = []
 
-    if (eventsNamesStorage.global.length > 0) {
-      eventsNamesStorage.global.map(eventName => {
-        eventEmitter.removeAllListeners(eventName)
-        removed.push(eventName)
-        this.removeByEventNameStorage(eventName, true)
-      })
-    }
+    const global = [...eventsNamesStorage.global]
+
+    global.map(eventName => {
+      eventEmitter.removeAllListeners(eventName)
+      removed.push(eventName)
+      this.removeByEventNameStorage(eventName)
+    })
 
     return removed
   }

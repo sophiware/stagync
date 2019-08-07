@@ -28,9 +28,6 @@ createStorage({
       }
     },
     methods: {
-      async init () {
-        console.log('init')
-      },
       async addAge (value) {
         const {age} = this.props
         const current = await age.get()

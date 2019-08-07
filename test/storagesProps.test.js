@@ -115,7 +115,7 @@ describe('Storage Props', () => {
 
   it('Add value Array', async function () {
     await storages.websites.props.urls.reset()
-    await storages.websites.props.urls.add('http://localhost')
+    await storages.websites.props.urls.add('http://localhost2')
 
     const urls = await storages.websites.props.urls.get()
 
@@ -126,6 +126,8 @@ describe('Storage Props', () => {
 
   it('Extract prop', async function () {
     const {age, urls} = storages.websites.props
+
+    await age.reset()
 
     age.sync((err, data) => {
       if (err) {
@@ -138,6 +140,7 @@ describe('Storage Props', () => {
     }, false)
 
     await age.set(10)
+
     const age10 = await age.get()
 
     if (age10 !== 10) {
@@ -145,6 +148,7 @@ describe('Storage Props', () => {
     }
 
     await urls.reset()
+
     urls.sync((err, data) => {
       if (err) {
         throw err
@@ -155,7 +159,7 @@ describe('Storage Props', () => {
       }
     }, false)
 
-    await urls.add('localhost', false)
+    await urls.add('localhost')
 
     const urls3 = await urls.get()
 

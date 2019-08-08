@@ -22,6 +22,8 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babel-polyfill": "^6.26.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.4.0",
     "eslint": "^4.11.0",
     "eslint-config-mocha": "0.0.0",
     "eslint-config-standard": "^10.2.1",

@@ -502,7 +502,7 @@ export default class Storage {
 
     try {
       return await new Promise((resolve, reject) => {
-        this.driver.setItem(that.key, props, (err) => {
+        that.driver.setItem(that.key, props, (err) => {
           props = that._resolve(props)
 
           if (err) {
@@ -555,7 +555,7 @@ export default class Storage {
     const that = this
 
     return new Promise((resolve, reject) => {
-      this.driver.getItem(that.key, (err, value) => {
+      that.driver.getItem(that.key, (err, value) => {
         if (err) {
           return reject(err)
         }

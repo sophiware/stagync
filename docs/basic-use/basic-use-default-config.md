@@ -10,7 +10,7 @@ parent: Basic use
 ```javascript
 defaultConfig({
   database: 'myDataBase',
-  storage: Memory
+  driver: Memory
 })
 ```
 Let's use `defaultConfig` to make it easier to configure our arrays. This feature allows one-time configuration of parameters that will be repeated when creating the arrays.

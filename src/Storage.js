@@ -84,7 +84,7 @@ export default class Storage {
     this.propsTypes = {}
     this._localEventReadName = `local:${this.uuid}:isRead`
 
-    if (config.methods.syncErrorHandler) {
+    if (config.methods && config.methods.syncErrorHandler) {
       this.syncErrorHandler = config.methods.syncErrorHandler
     } else if (config.syncErrorHandler !== undefined) {
       this.syncErrorHandler = config.syncErrorHandler

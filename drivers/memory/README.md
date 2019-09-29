@@ -1,0 +1,1 @@
+# stagync-storage-memory

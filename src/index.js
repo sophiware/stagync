@@ -1,11 +1,11 @@
-import Storage from './Storage.js'
-import utils from './Utils.js'
+const Storage = require('./Storage.js').default
+const utils = require('./utils.js').default
 
 const storages = utils.storages
 const createStorage = utils.createStorage
 const defaultConfig = utils.defaultConfig
 
-export {
+module.exports = {
   Storage,
   utils,
   storages,

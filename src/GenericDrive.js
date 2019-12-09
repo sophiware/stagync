@@ -1,6 +1,6 @@
 const localCache = {}
 
-export default class GenericDrive {
+module.exports.default = class GenericDrive {
   removeItem (item) {
     if (localCache[item]) {
       delete localCache[item]

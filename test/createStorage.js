@@ -1,4 +1,4 @@
-const { defaultConfig, createStorage } = require('../lib')
+const { defaultConfig, createStorage } = require('../src')
 
 defaultConfig({
   database: 'myDataBase'

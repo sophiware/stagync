@@ -1,4 +1,4 @@
-const { storages } = require('../lib')
+const { storages } = require('../src')
 require('./createStorage')
 
 describe('Storage Props', () => {

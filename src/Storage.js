@@ -1,10 +1,9 @@
-import 'babel-polyfill'
-import EventEmitter from 'events'
-import deepmerge from 'deepmerge'
-import clone from 'clone'
-import uuid from 'uuid/v4'
-import CreateProp from './CreateProp'
-import Memory from './Memory'
+const EventEmitter = require('events')
+const deepmerge = require('deepmerge')
+const clone = require('clone')
+const uuid = require('uuid')
+const CreateProp = require('./CreateProp').default
+const Memory = require('./Memory').default
 
 const eventEmitter = new EventEmitter()
 let eventsNamesStorage = {
@@ -12,7 +11,7 @@ let eventsNamesStorage = {
   global: []
 }
 
-export default class Storage {
+module.exports.default =  class Storage {
   constructor (config) {
     this.memory = new Memory()
     this._rawConfig = config

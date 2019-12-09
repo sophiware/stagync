@@ -1,5 +1,5 @@
-import Storage from './Storage'
-import deepmerge from 'deepmerge'
+const Storage = require('./Storage').default
+const deepmerge = require('deepmerge')
 
 const stagyncUtilsLocalCache = {
   defaultConfig: {},
@@ -35,7 +35,7 @@ const storages = new Proxy({}, {
   }
 })
 
-export default {
+module.exports.default = {
   defaultConfig (config) {
     delete config.schema
     delete config.methods

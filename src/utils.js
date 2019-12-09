@@ -1,5 +1,6 @@
 const Storage = require('./Storage')
 const deepmerge = require('deepmerge')
+const merge = typeof deepmerge === 'object' ? deepmerge.default : deepmerge
 
 const stagyncUtilsLocalCache = {
   defaultConfig: {},
@@ -60,7 +61,7 @@ module.exports = {
         }
         configStorage[key].methods._init = resolve
 
-        const storageConfig = deepmerge(stagyncUtilsLocalCache.defaultConfig, configStorage[key])
+        const storageConfig = merge(stagyncUtilsLocalCache.defaultConfig, configStorage[key])
         stagyncUtilsLocalCache.storages[key] = new Storage(storageConfig)
       }))
     }

@@ -1,5 +1,6 @@
 const EventEmitter = require('events')
 const deepmerge = require('deepmerge')
+const merge = typeof deepmerge === 'object' ? deepmerge.default : deepmerge
 const clone = require('clone')
 const uuid = require('uuid')
 const CreateProp = require('./CreateProp')
@@ -660,7 +661,7 @@ module.exports = class Storage {
       const data = await this.getStorageProps()
       const vProps = await this.getVirtualProps()
 
-      return deepmerge(data, vProps)
+      return merge(data, vProps)
     } catch (err) {
       throw err.message
     }

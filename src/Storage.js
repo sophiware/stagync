@@ -11,7 +11,7 @@ let eventsNamesStorage = {
   global: []
 }
 
-module.exports.default =  class Storage {
+module.exports.default = class Storage {
   constructor (config) {
     this.memory = new Memory()
     this._rawConfig = config
@@ -37,7 +37,6 @@ module.exports.default =  class Storage {
     this._prepareSchema()
 
     this._isReady().then(() => {
-
       if (this.init) {
         this.init()
       }
@@ -73,7 +72,6 @@ module.exports.default =  class Storage {
     try {
       const Driver = this.config.driver
       this.driver = new Driver(this)
-
     } catch (err) {
       throw new Error('An error occurred while trying to load storage', err)
     }

@@ -1,4 +1,4 @@
-const {storages} = require('../lib')
+const { storages } = require('../lib')
 require('./createStorage')
 
 describe('Storage', () => {
@@ -8,36 +8,36 @@ describe('Storage', () => {
     }
   })
 
-  it('Get default value', async function () {
-    let urls = await storages.websites.get('urls')
+  it('Get default value', async () => {
+    let urls = storages.websites.get('urls')
     if (urls.length === 0) {
       throw new Error('Not urls')
     }
   })
 
-  it('Set', async function () {
-    await storages.websites.set({name: 'test'})
-    const name = await storages.websites.get('name')
+  it('Set', async () => {
+    storages.websites.set({ name: 'test' })
+    const name = storages.websites.get('name')
 
     if (name !== 'test') {
       throw new Error('Set not found')
     }
   })
 
-  it('Change value', async function () {
-    const oldName = await storages.websites.get('name')
-    await storages.websites.set({name: 'new'})
-    const newName = await storages.websites.get('name')
+  it('Change value', async () => {
+    const oldName = storages.websites.get('name')
+    storages.websites.set({ name: 'new' })
+    const newName = storages.websites.get('name')
 
     if (oldName === newName || newName !== 'new') {
       throw new Error('No change')
     }
   })
 
-  it('Restore all props', async function () {
-    const oldAge = await storages.websites.get('age')
+  it('Restore all props', async () => {
+    const oldAge = storages.websites.get('age')
     storages.websites.restoreDefaultValues()
-    const currentAge = await storages.websites.get('age')
+    const currentAge = storages.websites.get('age')
 
     if (oldAge === 31 && currentAge === 30) {
       throw new Error('No reset')
@@ -115,26 +115,6 @@ describe('Storage', () => {
     })
   })
 
-  it('Sync all', function (done) {
-    storages.websites.syncAll((err, data) => {
-      storages.websites.discontinueAll()
-
-      if (err) {
-        return done(err)
-      }
-
-      if (data.name === 'itsis') {
-        return done()
-      } else {
-        done(new Error('No sync many'))
-      }
-    })
-
-    storages.websites.set({
-      name: 'itsis'
-    })
-  })
-
   it('Discontinue', function (done) {
     storages.websites.sync({
       name: (err, data) => done(new Error('Discontinue not work: ' + JSON.stringify(data)))
@@ -178,7 +158,7 @@ describe('Storage', () => {
     setTimeout(done, 1)
   })
 
-  it('Scope', () => new Promise(async (resolve, reject) => {
+  it('Scope', () => new Promise((resolve, reject) => {
     const scopeSuccess = storages.websites.scope()
     const scopeFail = storages.websites.scope()
 
@@ -197,7 +177,7 @@ describe('Storage', () => {
     })
   }))
 
-  it('Discontinue Global Scopes', () => new Promise(async (resolve, reject) => {
+  it('Discontinue Global Scopes', () => new Promise((resolve, reject) => {
     const scopeSuccess = storages.websites.scope()
     const scopeFail = storages.websites.scope()
 
@@ -218,7 +198,7 @@ describe('Storage', () => {
     setTimeout(resolve, 10)
   }))
 
-  it('Scopes Friendly', () => new Promise(async (resolve, reject) => {
+  it('Scopes Friendly', () => new Promise((resolve, reject) => {
     const scopeSuccess = storages.scope.success.websites
     const scopeFail = storages.scope.fail.websites
 
@@ -232,14 +212,14 @@ describe('Storage', () => {
 
     storages.websites.discontinueGlobalAll()
 
-    await scopeFail.set({
+    scopeFail.set({
       name: 'testname'
     })
 
     setTimeout(resolve, 10)
   }))
 
-  it('Still', () => new Promise(async (resolve, reject) => {
+  it('Still', () => new Promise((resolve, reject) => {
     storages.websites.syncAll((err, data) => {
       if (err) {
         return reject(err)
@@ -252,11 +232,11 @@ describe('Storage', () => {
       reject(new Error('Not Work'))
     })
 
-    await storages.websites.still().set({
+    storages.websites.still().set({
       name: 'still!'
     })
 
-    await storages.websites.set({
+    storages.websites.set({
       name: 'listener'
     })
 

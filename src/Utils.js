@@ -46,16 +46,26 @@ export default {
     return prop ? stagyncUtilsLocalCache[prop] : stagyncUtilsLocalCache
   },
   createStorage (configStorage) {
+    const inits = []
+
     for (let key in configStorage) {
       if (configStorage[key].table) {
         configStorage[key].table = key
       }
 
       configStorage[key].name = key
+      inits.push(new Promise(resolve => {
+        if (!configStorage[key].methods) {
+          configStorage[key].methods = {}
+        }
+        configStorage[key].methods._init = resolve
 
-      const storageConfig = deepmerge(stagyncUtilsLocalCache.defaultConfig, configStorage[key])
-      stagyncUtilsLocalCache.storages[key] = new Storage(storageConfig)
+        const storageConfig = deepmerge(stagyncUtilsLocalCache.defaultConfig, configStorage[key])
+        stagyncUtilsLocalCache.storages[key] = new Storage(storageConfig)
+      }))
     }
+
+    return () => Promise.all(inits)
   },
   storages
 }

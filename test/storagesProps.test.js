@@ -1,4 +1,4 @@
-const {storages} = require('../lib')
+const { storages } = require('../lib')
 require('./createStorage')
 
 describe('Storage Props', () => {
@@ -9,15 +9,15 @@ describe('Storage Props', () => {
   })
 
   it('Get default value', async function () {
-    let urls = await storages.websites.props.urls.get()
+    let urls = storages.websites.props.urls.get()
     if (urls.length === 0) {
       throw new Error('Not urls')
     }
   })
 
   it('Set', async function () {
-    await storages.websites.props.name.set('test')
-    const name = await storages.websites.props.name.get()
+    storages.websites.props.name.set('test')
+    const name = storages.websites.props.name.get()
 
     if (name !== 'test') {
       throw new Error('Set not found')
@@ -25,9 +25,9 @@ describe('Storage Props', () => {
   })
 
   it('Change value', async function () {
-    const oldName = await storages.websites.props.name.get()
-    await storages.websites.props.name.set('new')
-    const newName = await storages.websites.props.name.get()
+    const oldName = storages.websites.props.name.get()
+    storages.websites.props.name.set('new')
+    const newName = storages.websites.props.name.get()
 
     if (oldName === newName || newName !== 'new') {
       throw new Error('No change')
@@ -35,9 +35,9 @@ describe('Storage Props', () => {
   })
 
   it('Restore all props', async function () {
-    const oldAge = await storages.websites.props.age.get()
+    const oldAge = storages.websites.props.age.get()
     storages.websites.restoreDefaultValues()
-    const currentAge = await storages.websites.props.age.get()
+    const currentAge = storages.websites.props.age.get()
 
     if (oldAge === 31 && currentAge === 30) {
       throw new Error('No reset')
@@ -88,9 +88,9 @@ describe('Storage Props', () => {
   })
 
   it('Reset', async function () {
-    await storages.websites.props.urls.reset()
+    storages.websites.props.urls.reset()
 
-    const urls = await storages.websites.props.urls.get()
+    const urls = storages.websites.props.urls.get()
 
     if (urls.length !== 2) {
       throw new Error('Not work add')
@@ -98,15 +98,15 @@ describe('Storage Props', () => {
   })
 
   it('Add value Object', async function () {
-    await storages.websites.props.profiles.set({
+    storages.websites.props.profiles.set({
       nick: 'test'
     })
 
-    await storages.websites.props.profiles.add({
+    storages.websites.props.profiles.add({
       username: 'user'
     })
 
-    const profilesAdd = await storages.websites.props.profiles.get()
+    const profilesAdd = storages.websites.props.profiles.get()
 
     if (Object.keys(profilesAdd).length !== 2 || profilesAdd.username !== 'user') {
       throw new Error('Not work add')
@@ -114,18 +114,18 @@ describe('Storage Props', () => {
   })
 
   it('Add value Array', async function () {
-    await storages.websites.props.urls.reset()
-    await storages.websites.props.urls.add('http://localhost2')
+    storages.websites.props.urls.reset()
+    storages.websites.props.urls.add('http://localhost2')
 
-    const urls = await storages.websites.props.urls.get()
+    const urls = storages.websites.props.urls.get()
 
     if (urls.length !== 3) {
       throw new Error('Not work add')
     }
   })
 
-  it('Extract prop', async function () {
-    const {age, urls} = storages.websites.props
+  it('Extract prop', async () => {
+    const { age, urls } = storages.websites.props
 
     await age.reset()
 
@@ -133,15 +133,15 @@ describe('Storage Props', () => {
       if (err) {
         throw err
       }
-
+      console.log('sync', data)
       if (data !== 10) {
-        throw new Error('age data 10')
+        throw new Error('age data is ' + data)
       }
     }, false)
 
     await age.set(10)
 
-    const age10 = await age.get()
+    const age10 = age.get()
 
     if (age10 !== 10) {
       throw new Error('age10')
@@ -161,7 +161,7 @@ describe('Storage Props', () => {
 
     await urls.add('localhost')
 
-    const urls3 = await urls.get()
+    const urls3 = urls.get()
 
     if (urls3.length !== 3) {
       throw new Error('urls3')

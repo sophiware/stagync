@@ -4,6 +4,7 @@ import deepmerge from 'deepmerge'
 import clone from 'clone'
 import uuid from 'uuid/v4'
 import CreateProp from './CreateProp'
+import Memory from './Memory'
 
 const eventEmitter = new EventEmitter()
 let eventsNamesStorage = {
@@ -13,6 +14,7 @@ let eventsNamesStorage = {
 
 export default class Storage {
   constructor (config) {
+    this.memory = new Memory()
     this._rawConfig = config
     this._setup(config)
   }
@@ -33,12 +35,16 @@ export default class Storage {
     this._defineProps()
     this._prepareMethods()
     this._prepareVirtualProps()
-
     this._prepareSchema()
 
     this._isReady().then(() => {
+
       if (this.init) {
         this.init()
+      }
+
+      if (this._init) {
+        this._init()
       }
     })
   }
@@ -51,14 +57,24 @@ export default class Storage {
     return this.createInstance()
   }
 
+  useDrive (action, ...args) {
+    if (!this.driver) {
+      return this.memory[action](...args)
+    }
+
+    return this.driver[action](...args)
+  }
+
   _importDriver () {
     if (!this.config.driver) {
-      throw new Error('You need to define a storage for this model. Learn how at https://github.com/sophiware/stagync#storage')
+      this.driver = null
+      return null
     }
 
     try {
       const Driver = this.config.driver
       this.driver = new Driver(this)
+
     } catch (err) {
       throw new Error('An error occurred while trying to load storage', err)
     }
@@ -98,25 +114,43 @@ export default class Storage {
       return null
     }
 
-    for (let key in this.schema) {
-      let prop = this.schema[key]
+    for (const item in this.schema) {
+      let prop = this.schema[item]
 
-      if ('type' in prop) {
-        this.propsTypes[key] = prop.type
+      if (!('type' in prop)) {
+        throw Error('No type in item.')
       }
+
+      this.propsTypes[item] = prop.type
+    }
+
+    for (const item in this.schema) {
+      let prop = this.schema[item]
 
       if ('default' in prop) {
-        await this.setIfEmpty(key, prop.default)
+        await this.setIfEmpty(item, prop.default)
       }
+
+      await this._syncLocalMemory(item)
     }
 
     this.__ready = true
     eventEmitter.emit(this._localEventReadName)
   }
 
+  async _syncLocalMemory (item) {
+    const driveItem = await this.getItemDrive(item)
+
+    this.memory.setItem(this.key, {
+      [item]: {
+        _data: driveItem
+      }
+    })
+  }
+
   async setIfEmpty (key, prop) {
     try {
-      const data = await this._get(key)
+      const data = await this.getItemDrive(key)
 
       if (data !== null) {
         return null
@@ -125,7 +159,7 @@ export default class Storage {
       return err
     }
 
-    await this._set({
+    await this.setItemDrive({
       [key]: prop
     })
   }
@@ -158,7 +192,7 @@ export default class Storage {
         // Definindo sync para virtual props
         if (prop.listener) {
           this.syncMany(prop.listener, async () => {
-            const data = await this.getVirtualProps(key)
+            const data = this.getVirtualProps(key)
             this.emit({ [key]: data })
           })
         }
@@ -253,8 +287,8 @@ export default class Storage {
     }
 
     if (getStart) {
-      this.getStorageProps().then(async (data) => {
-        await this._isReady()
+      this._isReady().then(() => {
+        const data = this.memory.getItem(this.key)
 
         for (let key in data) {
           if (key in props) {
@@ -346,14 +380,14 @@ export default class Storage {
     }
   }
 
-  async format (props) {
+  format (props) {
     let result = {}
     const defaultError = 'Data formatting error'
 
     for (let key in props) {
       if (this.schema && this.schema[key] && this.schema[key].format) {
         try {
-          result[key] = await this.schema[key].format(props[key])
+          result[key] = this.schema[key].format(props[key])
           continue
         } catch (err) {
           this.emit(key, err || defaultError)
@@ -367,7 +401,7 @@ export default class Storage {
     return result
   }
 
-  async validation (props) {
+  validation (props) {
     let result = {}
     const defaultError = 'Invalid data'
 
@@ -380,7 +414,7 @@ export default class Storage {
             throw new Error('Error validation.')
           }
 
-          await this.schema[key].validation(props[key])
+          this.schema[key].validation(props[key])
         } catch (err) {
           this.emit(key, err || defaultError)
           continue
@@ -401,7 +435,7 @@ export default class Storage {
   }
 
   checkPropTypes (props) {
-    for (let key in props) {
+    for (const key in props) {
       let type = typeof props[key]
       let compare = this.propsTypes[key]
 
@@ -462,18 +496,14 @@ export default class Storage {
   }
 
   set (props, force = false) {
-    return this._set(props, force, true)
+    return this.setItemDrive(props, force, true)
   }
 
   /**
    * set
    * @description Modifica uma propriedade
    */
-  async _set (props, force = false, awaitReady = false) {
-    if (awaitReady) {
-      await this._isReady()
-    }
-
+  setItemDrive (props, force = false, awaitReady = false) {
     if (this.virtualProps) {
       for (let key in props) {
         if (this.virtualProps[key]) {
@@ -485,7 +515,7 @@ export default class Storage {
     // Força a execução sem a validação
     if (!force) {
       if (this._findInSchema(props) && this.propsTypes && this.checkPropTypes(props)) {
-        props = await this.validation(props)
+        props = this.validation(props)
       }
     }
 
@@ -494,23 +524,39 @@ export default class Storage {
     }
 
     // Formata os valores caso a formação esteja configura no schema
-    props = await this.format(props)
+    props = this.format(props)
 
     props = this._transform(props)
 
-    const that = this
+    this.memory.setItem(this.key, props)
+
+    if (!this.driver) {
+      if (awaitReady) {
+        return new Promise(resolve => {
+          this._isReady().then(() => {
+            this.emit(this._resolve(props))
+            resolve(true)
+          })
+        })
+      }
+
+      this.emit(this._resolve(props))
+      return new Promise(resolve => resolve())
+    }
 
     try {
-      return await new Promise((resolve, reject) => {
-        that.driver.setItem(that.key, props, (err) => {
-          props = that._resolve(props)
+      return new Promise(async (resolve, reject) => {
+        if (awaitReady) {
+          await this._isReady()
+        }
 
+        this.useDrive('setItem', this.key, props, (err) => {
           if (err) {
-            that.emit(props, err)
+            this.emit(null, err)
             return reject(err)
           }
 
-          that.emit(props)
+          this.emit(this._resolve(props))
           resolve(true)
         })
       })
@@ -532,9 +578,9 @@ export default class Storage {
    * clear
    * @description Limpa toda tabela
    */
-  async clear () {
-    await this._isReady()
-    const exec = await this.driver.removeItem(this.key)
+  clear () {
+    this.memory.removeItem(this.key)
+    const exec = this.useDrive('removeItem', this.key)
     return exec
   }
 
@@ -543,19 +589,18 @@ export default class Storage {
    * @description Remove uma propriedade
    */
   async remove (prop) {
-    await this._isReady()
-    const exec = await this._set({
+    const exec = this.setItemDrive({
       [prop]: null
     }, true)
 
     return exec
   }
 
-  getStorageProps () {
+  async getStorageProps () {
     const that = this
 
     return new Promise((resolve, reject) => {
-      that.driver.getItem(that.key, (err, value) => {
+      that.useDrive('getItem', that.key, (err, value) => {
         if (err) {
           return reject(err)
         }
@@ -567,14 +612,14 @@ export default class Storage {
 
   async getVirtualProps (item) {
     if (item) {
-      const data = await this.virtualProps[item]
+      const data = this.virtualProps[item]
       return data
     }
 
     let result = {}
 
     for (let key in this.virtualProps) {
-      let prop = await this.virtualProps[key]
+      let prop = this.virtualProps[key]
       result[key] = prop
     }
 
@@ -586,10 +631,15 @@ export default class Storage {
    * @description Pega as propriedadades
    */
   get (item) {
-    return this._get(item, true)
+    const memory = this.memory.getItem(this.key)
+    if (!memory) {
+      return null
+    }
+
+    return this._resolve(memory)[item] || null
   }
 
-  async _get (item, awaitReady = false) {
+  async getItemDrive (item, awaitReady = false) {
     try {
       if (awaitReady) {
         await this._isReady()
@@ -635,9 +685,7 @@ export default class Storage {
     return eventName
   }
 
-  async restoreDefaultValues () {
-    await this._isReady()
-
+  restoreDefaultValues () {
     const keys = Object.keys(this.schema)
 
     for (let i = 0; i < keys.length; i++) {
@@ -645,11 +693,11 @@ export default class Storage {
       let prop = this.schema[key]
 
       if ('default' in prop) {
-        await this._set({
+        this.setItemDrive({
           [key]: prop.default
         }, true)
       } else if (!('get' in prop)) {
-        await this._set({
+        this.setItemDrive({
           [key]: null
         }, true)
       }

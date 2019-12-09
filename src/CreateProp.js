@@ -18,8 +18,8 @@ export default class CreateProp {
     return this.that.get(this.propName)
   }
 
-  async add (newValue) {
-    let currentValue = await this.that.get(this.propName)
+  add (newValue) {
+    let currentValue = this.that.get(this.propName)
 
     if (this.that.propsTypes[this.propName] === 'array') {
       currentValue = [...currentValue, newValue]
@@ -27,16 +27,16 @@ export default class CreateProp {
       currentValue = {...currentValue, ...newValue}
     }
 
-    const response = await this.that.set({
+    const response = this.that.set({
       [this.propName]: currentValue
     })
 
     return response
   }
 
-  async remove (propOrIndex) {
+  remove (propOrIndex) {
     if (this.that.propsTypes[this.propName] === 'array' || this.that.propsTypes[this.propName] === 'object') {
-      const value = await this.get(this.propName)
+      const value = this.get(this.propName)
 
       if (this.that.propsTypes[this.propName] === 'array') {
         value.splice(propOrIndex, 1)
@@ -44,7 +44,7 @@ export default class CreateProp {
         delete value[propOrIndex]
       }
 
-      const response = await this.set(value)
+      const response = this.set(value)
 
       return response
     }

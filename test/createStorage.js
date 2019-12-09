@@ -1,9 +1,7 @@
 const { defaultConfig, createStorage } = require('../lib')
-const Memory = require('@stagync-driver/memory').default
 
 defaultConfig({
-  database: 'myDataBase',
-  driver: Memory
+  database: 'myDataBase'
 })
 
 createStorage({

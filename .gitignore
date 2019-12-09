@@ -1,6 +1,4 @@
 node_modules
 *.log
-*lock.json
-*.lock
+package-lock.json
 .idea
-.git

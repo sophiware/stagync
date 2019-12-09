@@ -1,5 +1,5 @@
 const Storage = require('./Storage').default
-const deepmerge = require('deepmerge')
+const deepmerge = require('deepmerge').default
 
 const stagyncUtilsLocalCache = {
   defaultConfig: {},

@@ -2,8 +2,8 @@ const EventEmitter = require('events')
 const deepmerge = require('deepmerge')
 const clone = require('clone')
 const uuid = require('uuid')
-const CreateProp = require('./CreateProp').default
-const Memory = require('./Memory').default
+const CreateProp = require('./CreateProp')
+const Memory = require('./Memory')
 
 const eventEmitter = new EventEmitter()
 let eventsNamesStorage = {
@@ -11,7 +11,7 @@ let eventsNamesStorage = {
   global: []
 }
 
-module.exports.default = class Storage {
+module.exports = class Storage {
   constructor (config) {
     this.memory = new Memory()
     this._rawConfig = config

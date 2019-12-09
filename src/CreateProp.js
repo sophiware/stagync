@@ -1,4 +1,4 @@
-module.exports.default = class CreateProp {
+module.exports = class CreateProp {
   constructor (that, propName) {
     this.that = that
     this.propName = propName

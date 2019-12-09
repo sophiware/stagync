@@ -1,6 +1,6 @@
 const localCache = {}
 
-module.exports.default = class Memory {
+module.exports = class Memory {
   removeItem (item, callback) {
     if (localCache[item]) {
       delete localCache[item]

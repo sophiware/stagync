@@ -1,5 +1,5 @@
-const Storage = require('./Storage.js').default
-const utils = require('./utils.js').default
+const Storage = require('./Storage.js')
+const utils = require('./utils.js')
 
 const storages = utils.storages
 const createStorage = utils.createStorage

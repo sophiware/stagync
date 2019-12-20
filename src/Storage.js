@@ -286,7 +286,7 @@ module.exports = class Storage {
 
     if (getStart) {
       this._isReady().then(() => {
-        const data = this.memory.getItem(this.key)
+        const data = this._resolve(this.memory.getItem(this.key))
 
         for (let key in data) {
           if (key in props) {

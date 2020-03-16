@@ -1,6 +1,6 @@
 {
   "name": "stagync",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Centralize and control and persist states through events.",
   "main": "src/index.js",
   "scripts": {

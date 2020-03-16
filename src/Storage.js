@@ -39,7 +39,7 @@ module.exports = class Storage {
 
     this._isReady().then(async () => {
       if (this.init) {
-        await this.executInit()
+        await this.executeInit()
       }
 
       if (this._init) {
@@ -48,7 +48,7 @@ module.exports = class Storage {
     })
   }
 
-  executInit () {
+  executeInit () {
     const init = this.init()
 
     return new Promise((resolve, reject) => {

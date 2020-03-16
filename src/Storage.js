@@ -20,7 +20,7 @@ module.exports = class Storage {
   }
 
   _isReady () {
-    if (!this.__ready) {
+    if (!this.ready) {
       return new Promise(resolve => {
         eventEmitter.on(this._localEventReadName, () => resolve())
       })
@@ -37,14 +37,26 @@ module.exports = class Storage {
     this._prepareVirtualProps()
     this._prepareSchema()
 
-    this._isReady().then(() => {
+    this._isReady().then(async () => {
       if (this.init) {
-        this.init()
+        await this.executInit()
       }
 
       if (this._init) {
         this._init()
       }
+    })
+  }
+
+  executInit () {
+    const init = this.init()
+
+    return new Promise((resolve, reject) => {
+      if (!!init && (typeof init === 'object' || typeof init === 'function') && typeof init.then === 'function') {
+        init.then(resolve).catch(reject)
+      }
+
+      resolve(init)
     })
   }
 
@@ -80,7 +92,7 @@ module.exports = class Storage {
 
   _prepareVars (config) {
     this.config = config
-    this.__ready = false
+    this.ready = false
     this.props = {}
     this.name = config.name
     this.database = config.database
@@ -132,7 +144,7 @@ module.exports = class Storage {
       await this._syncLocalMemory(item)
     }
 
-    this.__ready = true
+    this.ready = true
     eventEmitter.emit(this._localEventReadName)
   }
 
@@ -140,9 +152,7 @@ module.exports = class Storage {
     const driveItem = await this.getItemDrive(item)
 
     this.memory.setItem(this.key, {
-      [item]: {
-        _data: driveItem
-      }
+      [item]: driveItem
     })
   }
 
@@ -286,7 +296,7 @@ module.exports = class Storage {
 
     if (getStart) {
       this._isReady().then(() => {
-        const data = this._resolve(this.memory.getItem(this.key))
+        const data = this.memory.getItem(this.key)
 
         for (let key in data) {
           if (key in props) {
@@ -471,23 +481,7 @@ module.exports = class Storage {
     let obj = {}
 
     Object.keys(props).map(key => {
-      obj[key] = {
-        _data: props[key]
-      }
-    })
-
-    return obj
-  }
-
-  _resolve (props) {
-    if (!props) {
-      return props
-    }
-
-    let obj = {}
-
-    Object.keys(props).map(key => {
-      obj[key] = props[key]._data
+      obj[key] = props[key]
     })
 
     return obj
@@ -532,13 +526,13 @@ module.exports = class Storage {
       if (awaitReady) {
         return new Promise(resolve => {
           this._isReady().then(() => {
-            this.emit(this._resolve(props))
+            this.emit(props)
             resolve(true)
           })
         })
       }
 
-      this.emit(this._resolve(props))
+      this.emit(props)
       return new Promise(resolve => resolve())
     }
 
@@ -554,7 +548,7 @@ module.exports = class Storage {
             return reject(err)
           }
 
-          this.emit(this._resolve(props))
+          this.emit(props)
           resolve(true)
         })
       })
@@ -603,7 +597,7 @@ module.exports = class Storage {
           return reject(err)
         }
 
-        resolve(that._resolve(value))
+        resolve(value)
       })
     })
   }
@@ -629,12 +623,8 @@ module.exports = class Storage {
    * @description Pega as propriedadades
    */
   get (item) {
-    const memory = this.memory.getItem(this.key)
-    if (!memory) {
-      return null
-    }
-
-    return this._resolve(memory)[item] || null
+    const data = this.memory.getItem(this.key)
+    return data ? data[item] : undefined
   }
 
   async getItemDrive (item, awaitReady = false) {

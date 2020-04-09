@@ -673,7 +673,7 @@ module.exports = class Storage {
     return eventName
   }
 
-  restoreDefaultValues () {
+  async restoreDefaultValues () {
     const keys = Object.keys(this.schema)
 
     for (let i = 0; i < keys.length; i++) {
@@ -681,13 +681,13 @@ module.exports = class Storage {
       let prop = this.schema[key]
 
       if ('default' in prop) {
-        this.setItemDrive({
+        await this.setItemDrive({
           [key]: prop.default
-        }, true)
+        }, true, true)
       } else if (!('get' in prop)) {
-        this.setItemDrive({
+        await this.setItemDrive({
           [key]: null
-        }, true)
+        }, true, true)
       }
     }
   }
